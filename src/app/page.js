@@ -36,33 +36,66 @@ import {
 } from "lucide-react";
 import { DEFAULT_GALLERY, DEFAULT_OWNER, DEFAULT_REVIEWS } from "@/lib/defaults";
 
-// --- 4 DISTINCT WORK-RELATED BACKGROUND SLIDES FOR HERO SECTION ---
+// --- HERO BACKGROUND SLIDES (PCB / IoT / Automation / AI) ---
+// Files public/hero/ me hain. Real photo lagani ho to usi naam se replace kar do.
 const HERO_BG_SLIDES = [
+  { id: "pcb-bg", label: "PCB Designing", image: "/hero/pcb-layout.svg" },
+  { id: "iot-bg", label: "IoT Development", image: "/hero/iot-network.svg" },
+  { id: "auto-bg", label: "Automation Flows", image: "/hero/automation-flow.svg" },
+  { id: "ai-bg", label: "AI Automation", image: "/hero/ai-neural.svg" },
+  { id: "home-bg", label: "Smart Home", image: "/hero/smart-home.svg" },
+];
+
+// --- SOCIAL LINKS (apne real links yaha daalo) ---
+const INSTAGRAM_URL = "https://www.instagram.com/";
+const YOUTUBE_URL = "https://www.youtube.com/";
+
+// --- REAL PROJECTS (Nexwork Tech ne banaye) ---
+const REAL_PROJECTS = [
   {
-    id: "ai-bg",
-    label: "AI Automation",
-    image:
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1600&q=85",
+    name: "XOScrap",
+    tag: "Web App • Scrap Pickup Platform",
+    url: "https://www.xoscrap.com",
+    desc: "Ghar baithe scrap bechne ka platform — live rates, doorstep pickup request form aur admin panel. Varanasi me live.",
+    images: [
+      "https://www.xoscrap.com/images/a.jpeg",
+      "https://www.xoscrap.com/images/b.jpeg",
+      "https://www.xoscrap.com/images/c.jpeg",
+    ],
+    stats: ["26+ Live Rate Items", "Admin Panel", "Pickup Requests"],
   },
   {
-    id: "iot-bg",
-    label: "IoT Development",
-    image:
-      "https://images.unsplash.com/photo-1553406830-ef2513450d76?auto=format&fit=crop&w=1600&q=85",
-  },
-  {
-    id: "pcb-bg",
-    label: "PCB Designing",
-    image:
-      "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=1600&q=85",
-  },
-  {
-    id: "robotics-bg",
-    label: "Smart Systems",
-    image:
-      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=85",
+    name: "The Little Moon Academy",
+    tag: "School Website + ERP",
+    url: "https://www.thelittlemoonacademy.com",
+    desc: "Nursery se Class VIII school ki website — toppers, events, admission inquiry aur student/teacher ERP login.",
+    images: [
+      "https://thelittlemoonacademy.com/_next/image?url=%2Flogo.png&w=256&q=75",
+      "https://thelittlemoonacademy.com/activities/science-1.svg",
+      "https://thelittlemoonacademy.com/activities/sports-1.svg",
+    ],
+    stats: ["Student ERP", "Toppers & Events", "Admission Inquiry"],
   },
 ];
+
+function InstagramIcon({ className = "w-5 h-5" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function YoutubeIcon({ className = "w-5 h-5" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M22 8.2a3 3 0 0 0-2.1-2.1C18.1 5.6 12 5.6 12 5.6s-6.1 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12 31 31 0 0 0 2 15.8a3 3 0 0 0 2.1 2.1c1.8.5 7.9.5 7.9.5s6.1 0 7.9-.5a3 3 0 0 0 2.1-2.1c.3-1.3.4-2.5.4-3.8s-.1-2.5-.4-3.8Z" />
+      <path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 const BOT_LIVE_URL = "https://nexworktech-iot.onrender.com/connect.html";
 
@@ -416,6 +449,8 @@ function NexworkBrandWordmark({ compact = false, animateLetters = true }) {
             variants={animateLetters ? letterVariants : undefined}
             whileHover={compact ? undefined : { y: -6, scale: 1.08 }}
             className={`relative inline-block cursor-default ${
+              index === 7 ? (compact ? "ml-2" : "ml-4 sm:ml-6 md:ml-8") : ""
+            } ${
               index >= 7
                 ? "bg-gradient-to-b from-cyan-300 via-cyan-400 to-blue-500 bg-clip-text text-transparent"
                 : "bg-gradient-to-b from-white via-slate-100 to-slate-300 bg-clip-text text-transparent"
@@ -512,7 +547,7 @@ export default function NexworkTechWebsite() {
       const { ok, data } = await call("/api/site");
       if (!ok) return;
       setGallery(data.gallery);
-      setOwner(data.owner);
+      setOwner(data.owner?.name === "Ayaan Ahmad" ? DEFAULT_OWNER : data.owner);
       setReviews(data.reviews);
     } catch {}
   };
@@ -812,6 +847,9 @@ export default function NexworkTechWebsite() {
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               Test Live Bot
             </a>
+            <a href="#projects" className="hover:text-cyan-400 transition-colors">
+              Projects
+            </a>
             <a href="#showcase" className="hover:text-cyan-400 transition-colors">
               Showcase
             </a>
@@ -864,14 +902,14 @@ export default function NexworkTechWebsite() {
               src={HERO_BG_SLIDES[bgIndex].image}
               alt={HERO_BG_SLIDES[bgIndex].label}
               initial={{ opacity: 0, scale: 1.08 }}
-              animate={{ opacity: 0.42, scale: 1 }}
+              animate={{ opacity: 0.85, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.2, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full object-cover object-center"
             />
           </AnimatePresence>
 
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050811]/85 via-[#050811]/55 to-[#050811]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050811]/70 via-[#050811]/35 to-[#050811]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_15%,#050811_95%)]" />
         </div>
 
@@ -1195,6 +1233,85 @@ export default function NexworkTechWebsite() {
         </motion.div>
       </section>
 
+      {/* REAL PROJECTS */}
+      <section id="projects" className="py-24 px-6 max-w-7xl mx-auto relative z-10">
+        <div className="mb-14">
+          <p className="text-xs uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-2">
+            LIVE & DELIVERED
+          </p>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Our Real Projects</h2>
+          <p className="text-sm text-slate-400 mt-3 max-w-xl">
+            Ye websites Nexwork Tech ne client ke liye banayi hain aur abhi live chal rahi hain.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {REAL_PROJECTS.map((pr) => (
+            <div
+              key={pr.name}
+              className="rounded-3xl overflow-hidden bg-[#0b1021] border border-white/10 hover:border-cyan-400/40 transition-colors flex flex-col"
+            >
+              <div className="grid grid-cols-3 gap-1 h-52 bg-slate-900">
+                {pr.images.map((src, i) => (
+                  <img
+                    key={i}
+                    src={src}
+                    alt={`${pr.name} ${i + 1}`}
+                    loading="lazy"
+                    onError={(e) => (e.currentTarget.style.visibility = "hidden")}
+                    className={`w-full h-full ${
+                      i === 0 && pr.name !== "XOScrap" ? "object-contain p-4" : "object-cover"
+                    }`}
+                  />
+                ))}
+              </div>
+              <div className="p-6 flex-1 flex flex-col">
+                <p className="text-xs font-semibold text-cyan-400">{pr.tag}</p>
+                <h3 className="text-2xl font-bold text-white mt-1">{pr.name}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed mt-2">{pr.desc}</p>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {pr.stats.map((t) => (
+                    <span key={t} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-slate-300">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <a
+                  href={pr.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 self-start px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-xs"
+                >
+                  Visit Live Site <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FOUNDER */}
+      <section id="founder" className="py-16 px-6 max-w-5xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-[220px_1fr] gap-8 items-center rounded-3xl bg-white/[0.03] border border-white/10 p-8">
+          <div className="w-44 h-44 sm:w-52 sm:h-52 mx-auto rounded-full p-1 bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-500 shadow-xl shadow-cyan-500/20">
+            <img src={owner.photo} alt={owner.name} className="w-full h-full object-cover object-top rounded-full bg-white" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-cyan-400">{owner.role}</p>
+            <h2 className="text-3xl sm:text-4xl font-black text-white mt-1">{owner.name}</h2>
+            <p className="text-sm text-slate-300 mt-1">{owner.experience}</p>
+            <p className="text-sm text-slate-400 leading-relaxed mt-4">{owner.bio}</p>
+            <div className="flex flex-wrap gap-2 mt-5">
+              {["IoT", "PCB Design", "AI Automation"].map((t) => (
+                <span key={t} className="px-3.5 py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/30 text-xs font-semibold text-cyan-300">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PORTFOLIO / GALLERY SECTION */}
       <section id="showcase" className="py-24 px-6 max-w-7xl mx-auto relative z-10">
         <motion.div
@@ -1469,12 +1586,32 @@ export default function NexworkTechWebsite() {
                 N
               </div>
               <span className="text-lg font-black tracking-wider text-white">
-                NEXWORKTECH
+                NEXWORK <span className="text-cyan-400">TECH</span>
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
               Your engineering partner for custom AI Automation, IoT hardware ecosystems, and professional multi-layer PCB design.
             </p>
+            <div className="flex items-center gap-3 mt-5">
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Nexwork Tech on Instagram"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-pink-500/80 hover:border-pink-400 transition-colors"
+              >
+                <InstagramIcon />
+              </a>
+              <a
+                href={YOUTUBE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Nexwork Tech on YouTube"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-red-600/80 hover:border-red-500 transition-colors"
+              >
+                <YoutubeIcon />
+              </a>
+            </div>
           </div>
 
           <div>
@@ -1506,7 +1643,12 @@ export default function NexworkTechWebsite() {
         </div>
 
         <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {year} NEXWORKTECH. All rights reserved.</p>
+          <div className="text-center sm:text-left space-y-1">
+            <p>© {year} Nexwork Tech. All rights reserved.</p>
+            <p>
+              Design &amp; Developed by <span className="text-cyan-400 font-semibold">Nexwork Tech</span>
+            </p>
+          </div>
 
           <button
             onClick={() => setIsAdminModalOpen(true)}
@@ -1554,7 +1696,7 @@ export default function NexworkTechWebsite() {
                     <img
                       src={owner.photo}
                       alt={owner.name}
-                      className="w-full h-full object-cover rounded-full bg-slate-900"
+                      className="w-full h-full object-cover object-top rounded-full bg-white"
                     />
                   </div>
                   <h3 className="text-2xl font-bold text-white mt-5">{owner.name}</h3>

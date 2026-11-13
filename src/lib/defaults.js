@@ -29,13 +29,12 @@ export const DEFAULT_GALLERY = [
 ];
 
 export const DEFAULT_OWNER = {
-  name: "Ayaan Ahmad",
-  role: "Founder & Chief Systems Architect",
-  photo:
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
-  bio: "Leading NEXWORKTECH with a vision to bridge intelligent software and precision hardware. Specializing in AI workflow automation, embedded IoT ecosystems, and industrial-grade PCB engineering.",
-  experience: "5+ Years in Next-Gen Hardware & AI Systems",
-  location: "India • Global Operations",
+  name: "Ritik Kosh",
+  role: "Founder & Engineer, Nexwork Tech",
+  photo: "/ritik.jpg",
+  bio: "B.Tech engineer leading Nexwork Tech. Kaam: IoT products, PCB design aur AI automation — hardware se leke cloud tak complete solutions.",
+  experience: "B.Tech • IoT • PCB Design • AI Automation",
+  location: "India",
   email: "contact@nexworktech.com",
   phone: "+91 98765 43210",
 };
