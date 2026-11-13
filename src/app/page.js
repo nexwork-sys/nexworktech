@@ -256,7 +256,7 @@ function CuteWavingBot({ compact = false }) {
         damping: 16,
       }}
       className={`relative inline-flex items-center align-middle select-none ${
-        compact ? "ml-1.5" : "ml-2 sm:ml-4"
+        compact ? "ml-1.5" : "ml-1 sm:ml-4"
       }`}
     >
       {!compact && (
@@ -279,7 +279,7 @@ function CuteWavingBot({ compact = false }) {
         className={
           compact
             ? "w-6 h-6 drop-shadow-[0_3px_8px_rgba(34,211,238,0.4)]"
-            : "w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 drop-shadow-[0_10px_20px_rgba(34,211,238,0.35)]"
+            : "w-[1em] h-[1em] sm:w-16 sm:h-16 md:w-20 md:h-20 drop-shadow-[0_10px_20px_rgba(34,211,238,0.35)]"
         }
         fill="none"
         animate={{ y: [0, compact ? -1.5 : -3, 0] }}
@@ -426,7 +426,7 @@ function NexworkBrandWordmark({ compact = false, animateLetters = true }) {
       className={
         compact
           ? "inline-flex items-center text-base sm:text-lg font-black tracking-wide leading-none"
-          : "inline-flex items-center justify-center flex-wrap sm:flex-nowrap text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none drop-shadow-[0_8px_30px_rgba(0,0,0,0.85)]"
+          : "inline-flex items-center justify-center flex-nowrap whitespace-nowrap text-[7.2vw] sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none drop-shadow-[0_8px_30px_rgba(0,0,0,0.85)]"
       }
     >
       {brandLetters.map((char, index) => {
@@ -449,7 +449,7 @@ function NexworkBrandWordmark({ compact = false, animateLetters = true }) {
             variants={animateLetters ? letterVariants : undefined}
             whileHover={compact ? undefined : { y: -6, scale: 1.08 }}
             className={`relative inline-block cursor-default ${
-              index === 7 ? (compact ? "ml-2" : "ml-4 sm:ml-6 md:ml-8") : ""
+              index === 7 ? (compact ? "ml-2" : "ml-[0.25em] sm:ml-6 md:ml-8") : ""
             } ${
               index >= 7
                 ? "bg-gradient-to-b from-cyan-300 via-cyan-400 to-blue-500 bg-clip-text text-transparent"
@@ -825,12 +825,12 @@ export default function NexworkTechWebsite() {
       <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-[#050811]/75 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center font-black text-black text-lg shadow-lg shadow-cyan-500/25 shrink-0">
+            <div className="hidden sm:flex w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 items-center justify-center font-black text-black text-lg shadow-lg shadow-cyan-500/25 shrink-0">
               N
             </div>
             <div>
               <NexworkBrandWordmark compact={true} animateLetters={true} />
-              <span className="block text-[9px] tracking-[0.25em] text-cyan-400 uppercase mt-0.5">
+              <span className="block text-[8px] sm:text-[9px] tracking-[0.2em] sm:tracking-[0.25em] text-cyan-400 uppercase mt-0.5 whitespace-nowrap">
                 AI • IoT • PCB Lab
               </span>
             </div>
@@ -864,10 +864,10 @@ export default function NexworkTechWebsite() {
           <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               onClick={() => setIsOwnerOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-xs sm:text-sm font-medium transition-all"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-xs sm:text-sm font-medium transition-all"
             >
               <User className="w-4 h-4 text-cyan-400" />
-              <span>Owner</span>
+              <span className="hidden sm:inline">Owner</span>
             </button>
 
             <button
@@ -875,7 +875,7 @@ export default function NexworkTechWebsite() {
               className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-cyan-500/25 hover:scale-105 transition-transform"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Enquiry Now</span>
+              <span><span className="hidden sm:inline">Enquiry Now</span><span className="sm:hidden">Enquiry</span></span>
             </button>
           </div>
         </div>
