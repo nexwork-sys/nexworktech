@@ -1,60 +1,35 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nexwork Smart Home Demo</title>
 <style>
-:root{--bg:#0e1a24;--panel:#15273a;--ink:#e8f1f8;--mute:#8fa6b8;--on:#ffd24a;--ok:#35c27a;--bad:#ff4d4d;--cool:#5cc8ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eaf1f6;--panel:#fff;--ink:#14263a;--mute:#5b7388}}
+:root{--bg:#0e1a24;color-scheme:dark}
+@media(prefers-color-scheme:light){:root{--bg:#eaf1f6;color-scheme:light}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif}
-h1{font-size:1.25rem;margin:0}
-header{padding:14px 16px}
-header p{margin:4px 0 0;color:var(--mute);font-size:.85rem}
-.wrap{display:grid;gap:14px;padding:0 14px 20px;max-width:1100px;margin:auto;grid-template-columns:1fr}
-@media(min-width:860px){.wrap{grid-template-columns:1.4fr 1fr}}
-.card{background:var(--panel);border-radius:14px;padding:12px}
-.card h2{font-size:.95rem;margin:0 0 8px}
-svg{width:100%;height:auto;display:block;border-radius:10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tile{background:rgba(127,160,190,.12);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;min-height:84px}
-.tile b{font-size:.85rem}
-.tile small{color:var(--mute)}
-.row{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.sw{width:46px;height:26px;border-radius:13px;background:#566;border:0;position:relative;cursor:pointer;flex:none}
-.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s}
-.sw[aria-checked=true]{background:var(--ok)}
-.sw[aria-checked=true]::after{left:23px}
-button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radius:8px;padding:6px 12px;font-size:1rem;cursor:pointer}
-.big{font-size:1.5rem;font-weight:600}
-.alarm{display:none;background:var(--bad);color:#fff;border-radius:10px;padding:10px;margin-bottom:10px;font-weight:600;animation:bl .7s infinite alternate}
-.alarm.show{display:block}
-@keyframes bl{to{opacity:.55}}
-@media(prefers-reduced-motion:reduce){.alarm{animation:none}}
-.bar{height:12px;border-radius:6px;background:rgba(127,160,190,.25);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--cool);transition:width .4s}
-.chat{height:230px;overflow:auto;background:rgba(0,0,0,.18);border-radius:10px;padding:8px;font-size:.85rem;display:flex;flex-direction:column;gap:6px}
-.m{max-width:85%;padding:6px 9px;border-radius:9px;white-space:pre-wrap}
-.me{align-self:flex-end;background:#0b6e55;color:#fff}.bot{align-self:flex-start;background:#26384a;color:#fff}
-.b.rec{background:#c0392b;color:#fff;border-color:#c0392b}
-.in{display:flex;gap:6px;margin-top:8px}
-.in input{flex:1;border-radius:8px;border:1px solid #567;background:transparent;color:var(--ink);padding:8px;font-size:1rem}
-:focus-visible{outline:2px solid var(--cool);outline-offset:2px}
-.tag{font-size:.75rem;color:var(--mute);margin-top:6px}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);font-family:"Segoe UI",system-ui,sans-serif}
+.stage{height:100%;display:flex;flex-direction:row;gap:8px;padding:8px;padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+.pane{min-width:0;min-height:0;display:flex}
+#room-pane{flex:1.45 1 0}
+#tank-pane{flex:1 1 0}
+svg{width:100%;height:100%;display:block;border-radius:10px}
+@media(max-aspect-ratio:1/1){.stage{flex-direction:column}#room-pane{flex:1.4 1 0}}
+#tank-pane{flex-direction:column}
+#tank-pane svg{flex:1 1 0;min-height:0;height:auto}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding-top:6px}
+.ctl button{background:rgba(127,160,190,.28);color:#e8f1f8;border:0;border-radius:8px;padding:7px 10px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+@media(prefers-color-scheme:light){.ctl button{color:#14263a}}
+.ctl button.on{background:#1f9d55;color:#fff}
+.ctl button:active{transform:scale(.96)}
+#toast{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;font-size:12px;padding:6px 12px;border-radius:999px;display:none;max-width:90%;text-align:center}
+#toast.show{display:block}
 </style>
 </head>
 <body>
-<header>
-  <h1>Smart Home + Water Tank Demo</h1>
-  <p>Control it from the app panel on the right or from the chat. The room updates live.</p>
-</header>
-<div class="wrap">
-  <div>
-    <div class="card">
-      <h2>Room view</h2>
-      <div class="alarm" id="alarm" role="alert">🚨 Door Open Alert! The door is open</div>
-      <svg id="room" viewBox="0 0 1498 1050" role="img" aria-label="Room with two lights, fan, AC and door">
+<div class="stage">
+  <div class="pane" id="room-pane">
+<svg id="room" viewBox="0 0 1498 1050" role="img" aria-label="Room with two lights, fan, AC and door">
         <defs>
           <radialGradient id="dk1"><stop offset="0" stop-color="#000" stop-opacity=".62"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
           <radialGradient id="dp"><stop offset="0" stop-color="#201510" stop-opacity=".55"/><stop offset=".7" stop-color="#201510" stop-opacity=".3"/><stop offset="1" stop-color="#201510" stop-opacity="0"/></radialGradient>
@@ -86,11 +61,9 @@ button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radiu
           <text x="1305" y="300" font-size="30" font-weight="700" text-anchor="middle" fill="#fff" stroke="#900" stroke-width="1">Door Open!</text>
         </g>
       </svg>
-      <p class="tag" id="roomcap"></p>
-    </div>
-    <div class="card" style="margin-top:14px">
-      <h2>Water tank (auto pump)</h2><p class="tag" style="margin:0 0 8px">The tank fills while the pump is ON. Auto mode: pump ON below 25%, OFF at 100%.</p>
-      <svg id="tank" viewBox="0 0 640 420" role="img" aria-label="Rooftop water tank with auto pump">
+  </div>
+  <div class="pane" id="tank-pane">
+<svg id="tank" viewBox="0 0 640 420" role="img" aria-label="Rooftop water tank with auto pump">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4f5"/><stop offset="1" stop-color="#d9f0ff"/></linearGradient>
           <linearGradient id="wat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#37b4ff"/><stop offset="1" stop-color="#0a5da8"/></linearGradient>
@@ -142,49 +115,27 @@ button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radiu
         <text x="530" y="310" font-size="12" text-anchor="middle" fill="#14263a">Pump</text>
         <text x="95" y="146" font-size="12" text-anchor="end" fill="#14263a">Rooftop tank</text>
       </svg>
-    </div>
-  </div>
-
-  <div>
-    <div class="card">
-      <h2>📱 Mobile app</h2>
-      <div class="grid">
-        <div class="tile"><div class="row"><b>Light 1</b><button class="sw" id="s-l1" aria-label="Light 1"></button></div><small id="t-l1">OFF</small></div>
-        <div class="tile"><div class="row"><b>Light 2</b><button class="sw" id="s-l2" aria-label="Light 2"></button></div><small id="t-l2">OFF</small></div>
-        <div class="tile"><div class="row"><b>Fan</b><button class="sw" id="s-fan" aria-label="Fan"></button></div><small id="t-fan">OFF</small></div>
-        <div class="tile"><div class="row"><b>AC</b><button class="sw" id="s-ac" aria-label="AC"></button></div><small id="t-ac">OFF</small></div>
-        <div class="tile"><b>Temperature</b><div class="row"><button class="b" id="tdn" aria-label="Temp down">−</button><span class="big" id="tv">24°C</span><button class="b" id="tup" aria-label="Temp up">+</button></div></div>
-        <div class="tile"><div class="row"><b>Door</b><button class="sw" id="s-door" aria-label="Door open"></button></div><small id="t-door">Closed</small></div>
-        <div class="tile" style="grid-column:span 2"><b>Water level: <span id="wl">30%</span> · Pump <span id="wp">OFF</span></b><div class="bar"><i id="wb" style="width:30%"></i></div>
-          <div class="row"><button class="b" id="wdn">Use water −10</button><button class="b" id="wup">Fill +10</button></div>
-          <div class="row"><b>Auto mode</b><button class="sw" id="s-auto" aria-label="Auto mode"></button></div>
-          <small>Auto ON: level below 25% → pump ON, 100% → pump OFF.</small></div>
-      </div>
-    </div>
-    <div class="card" style="margin-top:14px">
-      <h2>💬 Chat commands</h2>
-      <div class="chat" id="chat" aria-live="polite"></div>
-      <form class="in" id="f"><input id="q" placeholder="Type or tap 🎤 and say: light on, water level..." autocomplete="off"><button class="b" type="button" id="mic" aria-label="Speak a command" title="Speak a command">🎤</button><button class="b" type="submit">Send</button></form>
-      <p class="tag" id="link">Demo: type a command or tap 🎤 and speak. Everything runs inside this page.</p>
+    <div class="ctl">
+      <button type="button" id="bdn">💧 Use water −10</button>
+      <button type="button" id="bup">🚰 Fill +10</button>
+      <button type="button" id="bempty">Empty tank</button>
+      <button type="button" id="bpump">Pump: OFF</button>
+      <button type="button" id="bauto">Auto: ON</button>
     </div>
   </div>
 </div>
+<div id="toast" role="status"></div>
 <script>
-const S={l1:false,l2:false,fan:false,ac:false,temp:24,door:false,water:30,pump:false,auto:true};
+const S={l1:false,l2:false,fan:false,ac:false,temp:24,door:false,water:0,pump:false,auto:true};
 const $=id=>document.getElementById(id);
 let spin=0,last=performance.now();
 function pumpLogic(){
   if(!S.auto)return;
-  if(S.water<=25)S.pump=true;
-  if(S.water>=100)S.pump=false;
+  if(S.water<=25)S.pump=true;   // low / empty -> pump ON automatically
+  if(S.water>=100)S.pump=false; // full -> pump OFF
 }
 function render(){
   pumpLogic();
-  ['l1','l2','fan','ac','door','auto'].forEach(k=>$('s-'+k).setAttribute('aria-checked',S[k]));
-  $('t-l1').textContent=S.l1?'ON':'OFF';$('t-l2').textContent=S.l2?'ON':'OFF';
-  $('t-fan').textContent=S.fan?'ON':'OFF';$('t-ac').textContent=S.ac?'ON':'OFF';
-  $('t-door').textContent=S.door?'Open':'Closed';
-  $('tv').textContent=S.temp+'°C';
   const ob=(id,v)=>$(id).setAttribute('opacity',v);
   ob('b1',S.l1?0:1);ob('b2',S.l2?0:1);ob('dk1',S.l1?0:1);ob('dk2',S.l2?0:1);
   ob('dkall',(S.l1||S.l2)?0:.35);
@@ -192,16 +143,17 @@ function render(){
   $('actemp').textContent=S.temp+'°C';
   ob('fan',S.fan?1:0);
   ob('dooropen',S.door?1:0);ob('siren',S.door?1:0);
-  $('alarm').classList.toggle('show',S.door);
   const y=130-76*S.water/100;
-  $('wrect').setAttribute('y',y+4);$('wave').setAttribute('d','M200,'+y+' q10,-5 20,0 t20,0 t20,0 t20,0 t20,0 t20,0 t20,0 t20,0 t20,0 v20 h-180z');
+  $('wrect').setAttribute('y',y+4);
+  $('wave').setAttribute('d','M200,'+y+' q10,-5 20,0 t20,0 t20,0 t20,0 t20,0 t20,0 t20,0 t20,0 t20,0 v20 h-180z');
   $('lvtxt').textContent='Level '+S.water+'%';
-  $('sfull').setAttribute('fill',S.water>=95?'#35c27a':'#778');$('slow').setAttribute('fill',S.water<=25?'#ff4d4d':'#778');
-  $('wb').style.width=S.water+'%';$('wl').textContent=S.water+'%';
-  $('wp').textContent=S.pump?'ON':'OFF';$('pumptxt').textContent=S.pump?'ON':'OFF';
+  $('sfull').setAttribute('fill',S.water>=95?'#35c27a':'#778');
+  $('slow').setAttribute('fill',S.water<=25?'#ff4d4d':'#778');
+  $('pumptxt').textContent=S.pump?'ON':'OFF';
   $('pumpc').setAttribute('fill',S.pump?'#1f9d55':'#3f3d3a');
   ob('flow',S.pump?1:0);ob('pglow',S.pump?1:0);
-  $('roomcap').textContent=`Light 1 ${S.l1?'ON':'OFF'}, Light 2 ${S.l2?'ON':'OFF'}, Fan ${S.fan?'ON':'OFF'}, AC ${S.ac?'ON at '+S.temp+'°C':'OFF'}, Door ${S.door?'OPEN':'closed'}`;
+  $('bpump').textContent='Pump: '+(S.pump?'ON':'OFF');$('bpump').classList.toggle('on',S.pump);
+  $('bauto').textContent='Auto: '+(S.auto?'ON':'OFF');$('bauto').classList.toggle('on',S.auto);
 }
 function tick(t){
   const dt=(t-last)/1000;last=t;
@@ -210,14 +162,14 @@ function tick(t){
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
-setInterval(()=>{if(S.pump&&S.water<100){S.water=Math.min(100,S.water+2);render();}},1000);
+setInterval(()=>{if(S.pump&&S.water<100){S.water=Math.min(100,S.water+4);render();}},1000);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+$('bdn').onclick=()=>{S.water=clamp(S.water-10,0,100);render();};
+$('bup').onclick=()=>{S.water=clamp(S.water+10,0,100);render();};
+$('bempty').onclick=()=>{S.water=0;S.auto=true;render();};
+$('bpump').onclick=()=>{S.auto=false;S.pump=!S.pump;render();};
+$('bauto').onclick=()=>{S.auto=!S.auto;render();};
 const setTemp=v=>{S.temp=clamp(v,16,30);if(!S.ac)S.ac=true;};
-[['l1'],['l2'],['fan'],['ac'],['door'],['auto']].forEach(([k])=>$('s-'+k).onclick=()=>{S[k]=!S[k];render();});
-$('tup').onclick=()=>{setTemp(S.temp+1);render();};
-$('tdn').onclick=()=>{setTemp(S.temp-1);render();};
-$('wup').onclick=()=>{S.water=clamp(S.water+10,0,100);render();};
-$('wdn').onclick=()=>{S.water=clamp(S.water-10,0,100);render();};
 
 const HELP='Try:\n• light on / lights off / light 1 on\n• fan on / fan off\n• ac on / ac off / temp 22\n• door open / door close / door status\n• water level (shows level and pump)\n• pump on / pump off / auto mode on\n• status (everything at once)';
 const onoff=v=>v?'ON':'OFF';
@@ -233,6 +185,8 @@ function command(text){
   const num=(c.match(/\b(\d{2})\b/)||[])[1];
   if(t(/\b(help|commands?|what can you do)\b/))return HELP;
   if(t(/\bauto( mode)?\b/)&&set!==null&&!asking){S.auto=set;render();return `⚙️ Auto mode ${onoff(set)}.\n`+waterText();}
+  if(t(/\b(empty|drain|khali)\b/)&&t(/\b(tank|water)\b/)){S.water=0;S.auto=true;render();return '💧 Tank emptied. Pump ON (auto).';}
+  if(t(/\b(fill|full)\b/)&&t(/\b(tank|water)\b/)){S.water=100;render();return '💧 Tank full.';}
   if(t(/\b(water|tank|level|pump)\b/)){
     if(t(/\bpump\b/)&&set!==null&&!asking){S.auto=false;S.pump=set;render();return `⚙️ Pump ${onoff(set)} (manual mode).\nWater level is ${S.water}%.`;}
     return waterText();
@@ -267,28 +221,36 @@ function command(text){
   if(t(/\b(status|everything|all)\b/))return statusText();
   return "Sorry, I didn't understand that.\n"+HELP;
 }
-const chat=$('chat');
-function say(t,cls){const d=document.createElement('div');d.className='m '+cls;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;}
-const LINK_DEFAULT=$('link').textContent;
-function speak(t){try{if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t.replace(/°C/g,' degrees').replace(/[^\x20-\x7E\n]/g,'').replace(/\n+/g,'. '));u.lang='en-IN';speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
-function ask(v,viaVoice){say(v,'me');const r=command(v);say(r,'bot');if(viaVoice)speak(r.startsWith('Sorry')?r.split('\n')[0]:r);}
+
+/* ---------- Voice: always-on, no mic button ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-const mic=$('mic');
-if(!SR){mic.style.display='none';$('link').textContent='Voice is not supported in this browser. Use Chrome or Edge, or type your command.';}
-else{
-  let rec=null,live=false;
-  mic.onclick=()=>{
-    if(live&&rec){rec.stop();return;}
-    rec=new SR();rec.lang='en-IN';rec.interimResults=false;rec.maxAlternatives=1;
-    rec.onstart=()=>{live=true;mic.classList.add('rec');$('link').textContent='🎤 Listening... say a command like "light on" or "water level".';};
-    rec.onerror=e=>{$('link').textContent=(e.error==='not-allowed'||e.error==='service-not-allowed')?'Microphone is blocked. Allow mic access for this site and try again.':'Could not hear you. Tap 🎤 and try again.';};
-    rec.onend=()=>{live=false;mic.classList.remove('rec');};
-    rec.onresult=e=>{const v=(e.results[0][0].transcript||'').trim();$('link').textContent=LINK_DEFAULT;if(v)ask(v,true);};
-    try{rec.start();}catch(err){}
+const toastEl=$('toast');
+function toast(m){toastEl.textContent=m;toastEl.classList.add('show');}
+function untoast(){toastEl.classList.remove('show');}
+let rec=null,want=false;
+function boot(){
+  if(rec||!want)return;
+  rec=new SR();rec.lang='en-IN';rec.continuous=true;rec.interimResults=false;rec.maxAlternatives=1;
+  rec.onstart=untoast;
+  rec.onresult=e=>{
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal){const v=(e.results[i][0].transcript||'').trim();if(v)command(v);}
+    }
   };
+  rec.onerror=e=>{
+    if(e.error==='not-allowed'||e.error==='service-not-allowed'){want=false;toast('Mic blocked. Allow microphone for this site, then tap anywhere.');}
+  };
+  rec.onend=()=>{rec=null;if(want)setTimeout(boot,300);}; // keep listening, auto-restart
+  try{rec.start();}catch(err){rec=null;if(want)setTimeout(boot,1000);}
 }
-say("Hi! I'm the Smart Home bot. Type a command like \"light on\", \"fan on\" or \"water level\".",'bot');
-$('f').onsubmit=e=>{e.preventDefault();const v=$('q').value.trim();if(!v)return;$('q').value='';ask(v);};
+function startVoice(){
+  if(!SR){toast('Voice is not supported in this browser. Use Chrome or Edge.');return;}
+  want=true;boot();
+}
+window.startVoice=startVoice;
+// fallback: if the browser needed a gesture, the first tap anywhere starts it
+addEventListener('pointerdown',()=>{if(SR&&!rec)startVoice();});
+startVoice();
 render();
 </script>
 </body>

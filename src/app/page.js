@@ -1147,10 +1147,15 @@ export default function NexworkTechWebsite() {
                     ● Live Embedded Preview — NEXWORKTECH IoT Home Bot
                   </span>
                 </div>
-                <div className="rounded-2xl overflow-hidden border border-white/15 bg-black h-[520px]">
+                <div className="rounded-2xl overflow-hidden border border-white/15 bg-black h-[70vh] min-h-[440px] max-h-[720px]">
                   <iframe
                     src="/demo/smart-home.html"
                     allow="microphone; autoplay"
+                    onLoad={(e) => {
+                      try {
+                        e.currentTarget.contentWindow?.startVoice?.();
+                      } catch {}
+                    }}
                     title="NEXWORKTECH Smart Home IoT Bot"
                     className="w-full h-full border-0"
                   />
