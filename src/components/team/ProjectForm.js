@@ -41,7 +41,7 @@ export default function ProjectForm({ project, users, onClose, onSaved }) {
         <div><Label>Description</Label><textarea rows={2} className={inp} value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
         <div className="grid sm:grid-cols-3 gap-3">
           <div className="sm:col-span-2">
-            <Label>GitHub Repo (owner/repo ya URL)</Label>
+            <Label>GitHub Repo (owner/repo or URL)</Label>
             <input className={inp} value={f.repo} onChange={(e) => setF({ ...f, repo: e.target.value })} placeholder="nexworktech/iot-bot" />
           </div>
           <div><Label>Deadline</Label><input type="date" className={inp} value={f.deadline} onChange={(e) => setF({ ...f, deadline: e.target.value })} /></div>
@@ -57,7 +57,7 @@ export default function ProjectForm({ project, users, onClose, onSaved }) {
           </div>
         )}
         <div>
-          <Label>Team Members (admin ko bhi add kar sakte ho)</Label>
+          <Label>Team Members (you can add the admin too)</Label>
           <div className="grid sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
             {users.filter((u) => u.active).map((u) => (
               <label key={u.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs cursor-pointer ${f.members.includes(u.id) ? "bg-cyan-500/15 border-cyan-400/40 text-white" : "bg-white/5 border-white/10 text-slate-300"}`}>

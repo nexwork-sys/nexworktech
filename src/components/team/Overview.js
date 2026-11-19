@@ -34,7 +34,7 @@ export default function Overview({ openProject }) {
 
       <div className="grid lg:grid-cols-5 gap-6">
         <div className={`${card} p-5 lg:col-span-3`}>
-          <h3 className="text-sm font-bold text-cyan-400 mb-4">Team Status (kaun kya kar raha hai)</h3>
+          <h3 className="text-sm font-bold text-cyan-400 mb-4">Team Status (who is working on what)</h3>
           <div className="space-y-3">
             {people.map((p) => (
               <div key={p.id} className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-black/20 border border-white/5">
@@ -67,7 +67,7 @@ export default function Overview({ openProject }) {
             <Activity className="w-4 h-4" /> Recent Activity
           </h3>
           <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-            {recent.length === 0 && <p className="text-xs text-slate-500">Abhi koi activity nahi.</p>}
+            {recent.length === 0 && <p className="text-xs text-slate-500">No activity yet.</p>}
             {recent.map((u) => (
               <div key={u.id} className="text-xs border-l-2 border-cyan-400/30 pl-3">
                 <p className="text-slate-200">
@@ -86,7 +86,7 @@ export default function Overview({ openProject }) {
             ))}
           </div>
           <p className="text-[10px] text-slate-500 mt-4 flex items-center gap-1">
-            <GitCommitHorizontal className="w-3 h-3" /> Commit details har project ke andar dikhte hain.
+            <GitCommitHorizontal className="w-3 h-3" /> Commit details are shown inside each project.
           </p>
         </div>
       </div>

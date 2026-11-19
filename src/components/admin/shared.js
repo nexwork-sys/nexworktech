@@ -39,10 +39,10 @@ export function ImageField({ value, onChange, folder, label = "Image" }) {
       <label className="block text-[11px] text-slate-400">{label}</label>
       <div className="flex flex-wrap items-center gap-3">
         <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 text-xs font-semibold cursor-pointer hover:bg-cyan-500/30">
-          <Upload className="w-3.5 h-3.5" /> {busy ? "Uploading..." : "Photo chunein"}
+          <Upload className="w-3.5 h-3.5" /> {busy ? "Uploading..." : "Choose photo"}
           <input type="file" accept="image/*" className="hidden" onChange={pick} />
         </label>
-        <input className={`${inp} flex-1 min-w-[200px]`} placeholder="ya image URL paste karein https://..." value={value || ""} onChange={(e) => onChange(e.target.value)} />
+        <input className={`${inp} flex-1 min-w-[200px]`} placeholder="or paste an image URL https://..." value={value || ""} onChange={(e) => onChange(e.target.value)} />
       </div>
       {value && <img src={value} alt="" className="h-20 rounded-lg object-cover border border-white/10" />}
       {err && <p className="text-[11px] text-rose-400">{err}</p>}

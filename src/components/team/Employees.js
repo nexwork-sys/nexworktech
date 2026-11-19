@@ -37,7 +37,7 @@ export default function Employees({ me }) {
   };
 
   const remove = async (u) => {
-    if (!confirm(`${u.name} ko delete karein? Projects se bhi hat jayenge.`)) return;
+    if (!confirm(`Delete ${u.name}? They will also be removed from all projects.`)) return;
     try {
       await api(`/api/team/users/${u.id}`, "DELETE");
       load();
@@ -68,9 +68,9 @@ export default function Employees({ me }) {
         </h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <div><Label>Full Name</Label><input required className={inp} placeholder="Rahul Verma" {...f("name")} /></div>
-          <div><Label>Username (login ke liye)</Label><input required className={inp} placeholder="rahul" {...f("username")} /></div>
+          <div><Label>Username (for login)</Label><input required className={inp} placeholder="rahul" {...f("username")} /></div>
           <div><Label>Temporary Password (min 6)</Label><input required minLength={6} className={inp} placeholder="••••••" {...f("password")} /></div>
-          <div><Label>GitHub Username (commits match karne ke liye)</Label><input className={inp} placeholder="rahul-dev" {...f("githubUsername")} /></div>
+          <div><Label>GitHub Username (to match commits)</Label><input className={inp} placeholder="rahul-dev" {...f("githubUsername")} /></div>
           <div><Label>Designation</Label><input className={inp} placeholder="IoT Engineer" {...f("designation")} /></div>
         </div>
         <Err>{err}</Err>
@@ -112,7 +112,7 @@ export default function Employees({ me }) {
           <form onSubmit={doReset} className="space-y-4">
             <div><Label>New Password (min 6)</Label><input required minLength={6} className={inp} value={newPw} onChange={(e) => setNewPw(e.target.value)} /></div>
             <Err>{pwErr}</Err>
-            <p className="text-[11px] text-slate-500">User purane devices se logout ho jayega aur login ke baad password badalne ko kaha jayega.</p>
+            <p className="text-[11px] text-slate-500">The user will be logged out of old devices and asked to change the password after login.</p>
             <button className={btnPrimary}>Set Password</button>
           </form>
         </Modal>

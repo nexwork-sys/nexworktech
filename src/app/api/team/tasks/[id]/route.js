@@ -8,14 +8,14 @@ export async function PATCH(req, { params }) {
   const { id } = await params;
   if (!isId(id)) return fail("Invalid id");
   const task = await Task.findById(id);
-  if (!task) return fail("Task nahi mila", 404);
+  if (!task) return fail("Task not found", 404);
   const { project, error: e2 } = await loadProject(task.project, user);
   if (e2) return e2;
   const b = await readBody(req);
   const isAdmin = user.role === "admin";
 
   // Employee sirf apne task ka status badal sakta hai
-  if (!isAdmin && !sameId(task.assignee, user._id)) return fail("Ye task aapko assign nahi hai", 403);
+  if (!isAdmin && !sameId(task.assignee, user._id)) return fail("This task is not assigned to you", 403);
 
   const prevStatus = task.status;
   if (b.status && STATUS_LABEL[b.status]) task.status = b.status;
@@ -24,7 +24,7 @@ export async function PATCH(req, { params }) {
   if (b.submission && typeof b.submission === "object") {
     const note = String(b.submission.note || "").trim().slice(0, 3000);
     const link = String(b.submission.link || "").trim().slice(0, 500);
-    if (!note && !link) return fail("Kaam ka note ya link daalna zaroori hai");
+    if (!note && !link) return fail("A work note or link is required");
     task.submission = { note, link, submittedAt: new Date() };
     task.feedback = "";
     task.status = "review";

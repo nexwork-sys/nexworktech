@@ -10,7 +10,7 @@ export async function POST(req, { params }) {
   const { project, error: e2 } = await loadProject(id, user);
   if (e2) return e2;
   const { text } = await readBody(req);
-  if (!text?.trim()) return fail("Update likhein");
+  if (!text?.trim()) return fail("Write an update");
   const update = await Update.create({ project: project._id, author: user._id, text: text.trim().slice(0, 2000) });
   await update.populate("author", "name username role");
   return json({ update }, 201);

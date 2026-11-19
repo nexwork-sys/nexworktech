@@ -10,11 +10,11 @@ export async function POST(req, { params }) {
   const { project, error: e2 } = await loadProject(id, user);
   if (e2) return e2;
   const b = await readBody(req);
-  if (!b.title?.trim()) return fail("Task ka title zaroori hai");
+  if (!b.title?.trim()) return fail("Task title is required");
 
   let assignee = null;
   if (b.assignee) {
-    if (!isId(b.assignee)) return fail("Assignee galat hai");
+    if (!isId(b.assignee)) return fail("Invalid assignee");
     assignee = b.assignee;
     if (!project.members.some((m) => sameId(m, assignee))) {
       project.members.push(assignee); // assign karte hi project team mein add
@@ -35,7 +35,7 @@ export async function POST(req, { params }) {
     project: project._id,
     author: user._id,
     kind: "system",
-    text: `Naya task: "${task.title}"${task.assignee ? ` → ${task.assignee.name}` : ""}`,
+    text: `New task: "${task.title}"${task.assignee ? ` → ${task.assignee.name}` : ""}`,
   });
   return json({ task }, 201);
 }

@@ -41,13 +41,13 @@ export async function POST(req) {
   if (error) return error;
   const b = await readBody(req);
   const text = String(b.text || "").trim().slice(0, 3000);
-  if (!text) return fail("Message khali hai");
+  if (!text) return fail("Message is empty");
 
   let thread = user._id;
   if (user.role === "admin") {
-    if (!isId(b.to)) return fail("Kisko bhejna hai?");
+    if (!isId(b.to)) return fail("Who should receive this?");
     const emp = await User.findOne({ _id: b.to, role: "employee" });
-    if (!emp) return fail("Employee nahi mila", 404);
+    if (!emp) return fail("Employee not found", 404);
     thread = emp._id;
   }
   const message = await Message.create({ thread, sender: user._id, text, readBy: [user._id] });

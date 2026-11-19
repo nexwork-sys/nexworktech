@@ -10,11 +10,11 @@ export async function GET() {
 
 // Public: "mujhe ye kaam chahiye" — apna detail bhejna
 export async function POST(req) {
-  if (!rateLimit(`wapp:${clientIp(req)}`, 10, 60 * 60 * 1000)) return fail("Thodi der baad try karein", 429);
+  if (!rateLimit(`wapp:${clientIp(req)}`, 10, 60 * 60 * 1000)) return fail("Please try again later", 429);
   const b = await readBody(req);
   const name = String(b.name || "").trim().slice(0, 120);
   const contact = String(b.contact || "").trim().slice(0, 200);
-  if (!name || !contact) return fail("Naam aur contact (phone/email) zaroori hai");
+  if (!name || !contact) return fail("Name and contact (phone/email) are required");
   await connectDB();
   let job = null;
   if (isId(b.jobId)) job = await RemoteJob.findById(b.jobId);

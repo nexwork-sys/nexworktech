@@ -10,12 +10,12 @@ export default function Account({ user, onUser }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    if (f.next !== f.confirm) return setMsg({ err: "Naya password aur confirm match nahi kar rahe", ok: "" });
+    if (f.next !== f.confirm) return setMsg({ err: "New password and confirm password do not match", ok: "" });
     try {
       const d = await api("/api/auth/change-password", "POST", { current: f.current, next: f.next });
       onUser(d.user);
       setF({ current: "", next: "", confirm: "" });
-      setMsg({ err: "", ok: "✓ Password badal gaya!" });
+      setMsg({ err: "", ok: "✓ Password changed!" });
     } catch (e2) {
       setMsg({ err: e2.message, ok: "" });
     }

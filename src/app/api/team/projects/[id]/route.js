@@ -56,7 +56,7 @@ export async function PATCH(req, { params }) {
   if (error) return error;
   const { id } = await params;
   const project = await Project.findById(id);
-  if (!project) return fail("Project nahi mila", 404);
+  if (!project) return fail("Project not found", 404);
   const b = await readBody(req);
 
   if (typeof b.name === "string" && b.name.trim()) project.name = b.name.trim();
@@ -64,7 +64,7 @@ export async function PATCH(req, { params }) {
   if (["active", "paused", "completed"].includes(b.status)) project.status = b.status;
   if ("deadline" in b) project.deadline = b.deadline ? new Date(b.deadline) : null;
   if ("repo" in b) {
-    if (b.repo && !parseRepo(b.repo)) return fail("GitHub repo format galat hai (owner/repo ya URL)");
+    if (b.repo && !parseRepo(b.repo)) return fail("Invalid GitHub repo format (owner/repo or URL)");
     project.repo = parseRepo(b.repo);
   }
   if (Array.isArray(b.members)) project.members = cleanIds(b.members);
@@ -78,7 +78,7 @@ export async function DELETE(_req, { params }) {
   if (error) return error;
   const { id } = await params;
   const project = await Project.findById(id);
-  if (!project) return fail("Project nahi mila", 404);
+  if (!project) return fail("Project not found", 404);
   await Promise.all([
     Task.deleteMany({ project: project._id }),
     Update.deleteMany({ project: project._id }),

@@ -8,13 +8,13 @@ export async function PUT(req, { params }) {
   const { id } = await params;
   if (!isId(id)) return fail("Invalid id");
   const b = await readBody(req);
-  if (!b.title || !b.image) return fail("Title aur image zaroori hai");
+  if (!b.title || !b.image) return fail("Title and image are required");
   const item = await GalleryItem.findByIdAndUpdate(
     id,
     { title: b.title, category: SERVICE_KINDS.includes(b.category) ? b.category : "AI Automation", description: b.description || "", image: b.image },
     { new: true }
   );
-  if (!item) return fail("Item nahi mila", 404);
+  if (!item) return fail("Item not found", 404);
   return json({ item });
 }
 

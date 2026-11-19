@@ -8,8 +8,8 @@ function headers() {
 
 export async function fetchRepoCommits(repo, perPage = 50) {
   const res = await fetch(`${API}/repos/${repo}/commits?per_page=${perPage}`, { headers: headers(), cache: "no-store" });
-  if (res.status === 404) throw new Error("Repo nahi mila. Private repo hai toh GITHUB_TOKEN set karein.");
-  if (res.status === 403 || res.status === 401) throw new Error("GitHub ne access mana kiya (token/rate limit check karein).");
+  if (res.status === 404) throw new Error("Repo not found. If it is private, set GITHUB_TOKEN.");
+  if (res.status === 403 || res.status === 401) throw new Error("GitHub denied access (check token / rate limit).");
   if (!res.ok) throw new Error(`GitHub error ${res.status}`);
   const list = await res.json();
   return list.map((c) => ({

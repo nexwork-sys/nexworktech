@@ -32,7 +32,7 @@ export default function ServicesAdmin({ services, setServices, gallery, setGalle
     }
   };
   const delService = async (id) => {
-    if (!confirm("Ye service card delete karein?")) return;
+    if (!confirm("Delete this service card?")) return;
     await api(`/api/services/${id}`, "DELETE").catch((e) => alert(e.message));
     setServices(services.filter((s) => s.id !== id));
   };
@@ -40,7 +40,7 @@ export default function ServicesAdmin({ services, setServices, gallery, setGalle
   const savePic = async (e) => {
     e.preventDefault();
     setErr("");
-    if (!pf.image) return setErr("Photo chunein ya URL daalein");
+    if (!pf.image) return setErr("Choose a photo or enter a URL");
     try {
       if (pf.id) {
         const { item } = await api(`/api/gallery/${pf.id}`, "PUT", pf);
@@ -65,8 +65,8 @@ export default function ServicesAdmin({ services, setServices, gallery, setGalle
       <section className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h4 className="text-sm font-bold text-cyan-400">Services (website ke &quot;Services&quot; section ke cards)</h4>
-            <p className="text-[11px] text-slate-400">AI Automation aur AIoT — text, features sab yahin se badlein.</p>
+            <h4 className="text-sm font-bold text-cyan-400">Services (cards in the website &quot;Services&quot; section)</h4>
+            <p className="text-[11px] text-slate-400">AI Automation and AIoT — edit text and features here.</p>
           </div>
           {!sf && <button onClick={() => setSf({ ...EMPTY_SERVICE })} className={btnPrimary}><Plus className="w-4 h-4" /> Add Service</button>}
         </div>
@@ -84,7 +84,7 @@ export default function ServicesAdmin({ services, setServices, gallery, setGalle
             </div>
             <div><Label>Chhota tag (jaise 01 / INTELLIGENCE)</Label><input className={inp} value={sf.tag} onChange={(e) => setSf({ ...sf, tag: e.target.value })} /></div>
             <div><Label>Description</Label><textarea rows={3} className={inp} value={sf.description} onChange={(e) => setSf({ ...sf, description: e.target.value })} /></div>
-            <div><Label>Features (har line mein ek)</Label><textarea rows={4} className={inp} value={sf.features} onChange={(e) => setSf({ ...sf, features: e.target.value })} placeholder={"Custom LLM Agents\nWorkflow Automation"} /></div>
+            <div><Label>Features (one per line)</Label><textarea rows={4} className={inp} value={sf.features} onChange={(e) => setSf({ ...sf, features: e.target.value })} placeholder={"Custom LLM Agents\nWorkflow Automation"} /></div>
             <Err>{err}</Err>
             <div className="flex gap-3">
               <button className={btnPrimary}>{sf.id ? "Update Service" : "Save Service"}</button>
@@ -110,15 +110,15 @@ export default function ServicesAdmin({ services, setServices, gallery, setGalle
               <p className="text-[10px] text-cyan-300">{(s.features || []).length} features</p>
             </div>
           ))}
-          {services.length === 0 && <p className="text-xs text-slate-500">Koi service nahi. &quot;Add Service&quot; dabayein.</p>}
+          {services.length === 0 && <p className="text-xs text-slate-500">No services yet. Click &quot;Add Service&quot;.</p>}
         </div>
       </section>
 
       {/* SHOWCASE */}
       <section className="space-y-4">
         <div>
-          <h4 className="text-sm font-bold text-cyan-400">Showcase (Services ke neeche ki photos)</h4>
-          <p className="text-[11px] text-slate-400">Photo AI Automation ya AIoT category mein jodein — website par usi filter ke andar dikhegi.</p>
+          <h4 className="text-sm font-bold text-cyan-400">Showcase (photos below Services)</h4>
+          <p className="text-[11px] text-slate-400">Add a photo under the AI Automation or AIoT category — it will appear under the same filter on the website.</p>
         </div>
 
         <form onSubmit={savePic} className={`${card} p-5 space-y-4`}>

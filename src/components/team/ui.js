@@ -11,7 +11,7 @@ export async function api(url, method = "GET", body) {
     cache: "no-store",
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw Object.assign(new Error(data.error || "Kuch galat ho gaya"), { status: res.status });
+  if (!res.ok) throw Object.assign(new Error(data.error || "Something went wrong"), { status: res.status });
   return data;
 }
 
@@ -39,10 +39,10 @@ export const PRIORITY = {
 export function timeAgo(d) {
   if (!d) return "—";
   const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000);
-  if (s < 60) return "abhi";
-  if (s < 3600) return `${Math.floor(s / 60)} min pehle`;
-  if (s < 86400) return `${Math.floor(s / 3600)} ghante pehle`;
-  if (s < 86400 * 30) return `${Math.floor(s / 86400)} din pehle`;
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)} min ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)} hours ago`;
+  if (s < 86400 * 30) return `${Math.floor(s / 86400)} days ago`;
   return new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 

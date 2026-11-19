@@ -31,7 +31,7 @@ export default function Projects({ user, openProject }) {
         <p className="text-sm text-slate-400">Loading...</p>
       ) : projects.length === 0 ? (
         <p className="text-sm text-slate-400 py-10 text-center">
-          {isAdmin ? "Abhi koi project nahi. \"New Project\" se shuru karein." : "Aapko abhi koi project assign nahi hua hai."}
+          {isAdmin ? "No projects yet. Start with \"New Project\"." : "No projects have been assigned to you yet."}
         </p>
       ) : (
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">

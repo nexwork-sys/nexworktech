@@ -33,17 +33,17 @@ export default function ProjectDetail({ id, user, onBack }) {
     try { await api(`/api/team/tasks/${taskId}`, "PATCH", { status }); load(); } catch (e) { alert(e.message); }
   };
   const requestChanges = async (t) => {
-    const feedback = prompt("Employee ko kya badalna hai? (feedback)");
+    const feedback = prompt("What should the employee change? (feedback)");
     if (feedback === null) return;
     try { await api(`/api/team/tasks/${t.id}`, "PATCH", { status: "in_progress", feedback }); load(); } catch (e) { alert(e.message); }
   };
   const delTask = async (taskId) => {
-    if (!confirm("Ye task delete karein?")) return;
+    if (!confirm("Delete this task?")) return;
     await api(`/api/team/tasks/${taskId}`, "DELETE").catch((e) => alert(e.message));
     load();
   };
   const delProject = async () => {
-    if (!confirm(`"${p.name}" project, uske tasks aur history delete ho jayenge. Pakka?`)) return;
+    if (!confirm(`The project "${p.name}", its tasks and history will be deleted. Are you sure?`)) return;
     await api(`/api/team/projects/${p.id}`, "DELETE").catch((e) => alert(e.message));
     onBack();
   };
@@ -111,7 +111,7 @@ export default function ProjectDetail({ id, user, onBack }) {
       <div className={`${card} p-5`}>
         <h3 className="text-sm font-bold text-cyan-400 mb-4">Team Work Status</h3>
         {memberRows.length === 0 ? (
-          <p className="text-xs text-slate-500">Is project mein abhi koi member nahi.</p>
+          <p className="text-xs text-slate-500">This project has no members yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs min-w-[560px]">
@@ -130,7 +130,7 @@ export default function ProjectDetail({ id, user, onBack }) {
                 ))}
                 {others.map((c) => (
                   <tr key={c.key} className="border-t border-white/5 text-slate-500">
-                    <td className="py-2.5">{c.name || c.key} <span className="text-[10px]">(team mein match nahi)</span></td>
+                    <td className="py-2.5">{c.name || c.key} <span className="text-[10px]">(no matching team member)</span></td>
                     <td className="text-center">—</td><td className="text-center">{c.total}</td><td className="text-center">{c.last7}</td><td className="text-right">{timeAgo(c.lastAt)}</td>
                   </tr>
                 ))}
@@ -147,7 +147,7 @@ export default function ProjectDetail({ id, user, onBack }) {
             <h3 className="text-sm font-bold text-cyan-400">Tasks</h3>
             {isAdmin && <button onClick={() => setTaskForm({ title: "", description: "", assignee: "", priority: "medium", dueDate: "" })} className={btnPrimary}><Plus className="w-4 h-4" /> Add Task</button>}
           </div>
-          {tasks.length === 0 && <p className="text-xs text-slate-500">Abhi koi task nahi.</p>}
+          {tasks.length === 0 && <p className="text-xs text-slate-500">No tasks yet.</p>}
           <div className="grid sm:grid-cols-2 gap-3">
             {Object.keys(STATUS).map((st) => (
               <div key={st} className="rounded-2xl bg-black/20 border border-white/5 p-3 space-y-2">
@@ -176,7 +176,7 @@ export default function ProjectDetail({ id, user, onBack }) {
                       {isAdmin && t.status === "review" && (
                         <div className="flex gap-2">
                           <button onClick={() => setStatus(t.id, "done")} className={`${btnPrimary} flex-1`}>Approve</button>
-                          <button onClick={() => requestChanges(t)} className={`${btnGhost} flex-1`}>Changes chahiye</button>
+                          <button onClick={() => requestChanges(t)} className={`${btnGhost} flex-1`}>Request changes</button>
                         </div>
                       )}
                       {canEdit && (
@@ -208,10 +208,10 @@ export default function ProjectDetail({ id, user, onBack }) {
                   <span className="text-[11px] text-slate-400">{syncMsg}</span>
                 </div>
               ) : (
-                <p className="text-xs text-amber-300">Is project mein GitHub repo set nahi hai{isAdmin ? " — Edit se add karein." : "."}</p>
+                <p className="text-xs text-amber-300">No GitHub repo is set for this project{isAdmin ? " — add one via Edit." : "."}</p>
               )}
               <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
-                {commits.length === 0 && p.repo && <p className="text-xs text-slate-500">Abhi koi commit nahi aaya. &quot;Sync GitHub&quot; dabayein ya webhook set karein (README dekhein).</p>}
+                {commits.length === 0 && p.repo && <p className="text-xs text-slate-500">No commits yet. Click &quot;Sync GitHub&quot; or set up the webhook (see README).</p>}
                 {commits.map((c) => {
                   const member = p.members.find((m) => m.githubUsername && m.githubUsername.toLowerCase() === c.authorLogin);
                   return (
@@ -231,11 +231,11 @@ export default function ProjectDetail({ id, user, onBack }) {
           {panel === "updates" && (
             <div className="space-y-4">
               <form onSubmit={postNote} className="flex gap-2">
-                <input className={inp} placeholder="Aaj kya kaam kiya / kahan atke ho..." value={note} onChange={(e) => setNote(e.target.value)} />
+                <input className={inp} placeholder="What did you do today / where are you stuck..." value={note} onChange={(e) => setNote(e.target.value)} />
                 <button className={btnPrimary}><Send className="w-3.5 h-3.5" /></button>
               </form>
               <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                {updates.length === 0 && <p className="text-xs text-slate-500">Abhi koi update nahi.</p>}
+                {updates.length === 0 && <p className="text-xs text-slate-500">No updates yet.</p>}
                 {updates.map((u) => (
                   <div key={u.id} className={`text-xs border-l-2 pl-3 ${u.kind === "system" ? "border-white/15" : "border-cyan-400/50"}`}>
                     <p className={u.kind === "system" ? "text-slate-400" : "text-slate-100"}>

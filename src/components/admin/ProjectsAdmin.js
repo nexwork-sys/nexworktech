@@ -29,7 +29,7 @@ export default function ProjectsAdmin({ projects, setProjects }) {
     }
   };
   const del = async (id) => {
-    if (!confirm("Ye project website se hata dein?")) return;
+    if (!confirm("Remove this project from the website?")) return;
     await api(`/api/portfolio/${id}`, "DELETE").catch((e) => alert(e.message));
     setProjects(projects.filter((p) => p.id !== id));
   };
@@ -40,7 +40,7 @@ export default function ProjectsAdmin({ projects, setProjects }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h4 className="text-sm font-bold text-cyan-400">Website Projects</h4>
-          <p className="text-[11px] text-slate-400">Jo yahan add karenge wahi UI par &quot;Our Projects&quot; mein dikhega.</p>
+          <p className="text-[11px] text-slate-400">Whatever you add here appears under &quot;Our Projects&quot; on the website.</p>
         </div>
         {!f && <button onClick={() => setF({ ...EMPTY, images: [""] })} className={btnPrimary}><Plus className="w-4 h-4" /> Add Project</button>}
       </div>
@@ -53,7 +53,7 @@ export default function ProjectsAdmin({ projects, setProjects }) {
           </div>
           <div><Label>Project Link (live site)</Label><input className={inp} placeholder="https://..." value={f.url} onChange={(e) => setF({ ...f, url: e.target.value })} /></div>
           <div><Label>Description</Label><textarea rows={3} className={inp} value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
-          <div><Label>Highlights (har line mein ek, jaise &quot;Admin Panel&quot;)</Label><textarea rows={3} className={inp} value={f.stats} onChange={(e) => setF({ ...f, stats: e.target.value })} /></div>
+          <div><Label>Highlights (one per line, e.g. &quot;Admin Panel&quot;)</Label><textarea rows={3} className={inp} value={f.stats} onChange={(e) => setF({ ...f, stats: e.target.value })} /></div>
 
           <div className="space-y-3">
             <Label>Images (max 6)</Label>
@@ -65,7 +65,7 @@ export default function ProjectsAdmin({ projects, setProjects }) {
                 )}
               </div>
             ))}
-            {f.images.length < 6 && <button type="button" onClick={() => setF({ ...f, images: [...f.images, ""] })} className={btnGhost}><Plus className="w-3.5 h-3.5" /> Aur image</button>}
+            {f.images.length < 6 && <button type="button" onClick={() => setF({ ...f, images: [...f.images, ""] })} className={btnGhost}><Plus className="w-3.5 h-3.5" /> Add image</button>}
           </div>
 
           <Err>{err}</Err>
@@ -93,7 +93,7 @@ export default function ProjectsAdmin({ projects, setProjects }) {
             </div>
           </div>
         ))}
-        {projects.length === 0 && <p className="text-xs text-slate-500">Abhi koi project nahi. &quot;Add Project&quot; dabayein.</p>}
+        {projects.length === 0 && <p className="text-xs text-slate-500">No projects yet. Click &quot;Add Project&quot;.</p>}
       </div>
     </div>
   );

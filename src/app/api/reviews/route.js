@@ -11,12 +11,12 @@ export async function GET() {
 
 // Public: naya review (featured=false, admin approve karega)
 export async function POST(req) {
-  if (!rateLimit(`rev:${clientIp(req)}`, 5, 60 * 60 * 1000)) return fail("Thodi der baad try karein", 429);
+  if (!rateLimit(`rev:${clientIp(req)}`, 5, 60 * 60 * 1000)) return fail("Please try again later", 429);
   const b = await readBody(req);
   const name = String(b.name || "").trim().slice(0, 120);
   const email = String(b.email || "").trim().slice(0, 200);
   const comment = String(b.comment || "").trim().slice(0, 2000);
-  if (!name || !email || !comment) return fail("Naam, email aur review zaroori hai");
+  if (!name || !email || !comment) return fail("Name, email and review are required");
   await connectDB();
   await Review.create({
     name,

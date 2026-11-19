@@ -39,7 +39,7 @@ export default function MyWork({ openProject }) {
   };
 
   if (!tasks) return <p className="text-sm text-slate-400">Loading...</p>;
-  if (!tasks.length) return <p className="text-sm text-slate-400 py-10 text-center">Abhi aapko koi task assign nahi hua hai.</p>;
+  if (!tasks.length) return <p className="text-sm text-slate-400 py-10 text-center">No tasks have been assigned to you yet.</p>;
 
   return (
     <div className="space-y-3">
@@ -86,10 +86,10 @@ export default function MyWork({ openProject }) {
       {submitFor && (
         <Modal title={`Submit: ${submitFor.title}`} onClose={() => setSubmitFor(null)}>
           <form onSubmit={submit} className="space-y-4">
-            <div><Label>Kya kaam kiya? (note)</Label><textarea rows={4} className={inp} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Firmware ready hai, OTA test kar liya..." /></div>
-            <div><Label>Kaam ka link (GitHub / Drive / demo)</Label><input className={inp} placeholder="https://..." value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} /></div>
+            <div><Label>What did you work on? (note)</Label><textarea rows={4} className={inp} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Firmware is ready, OTA tested..." /></div>
+            <div><Label>Work link (GitHub / Drive / demo)</Label><input className={inp} placeholder="https://..." value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} /></div>
             <Err>{err}</Err>
-            <p className="text-[11px] text-slate-500">Submit karte hi task &quot;In Review&quot; mein chala jayega aur admin ko dikhega.</p>
+            <p className="text-[11px] text-slate-500">After you submit, the task moves to &quot;In Review&quot; and the admin will see it.</p>
             <div className="flex gap-3"><button className={btnPrimary}>Submit to Admin</button><button type="button" onClick={() => setSubmitFor(null)} className={btnGhost}>Cancel</button></div>
           </form>
         </Modal>

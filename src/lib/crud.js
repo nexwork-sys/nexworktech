@@ -26,7 +26,7 @@ export function crudCollection(Model, fields, required) {
     if (error) return error;
     const data = pick(await readBody(req), fields);
     if (required.some((r) => !data[r] || (Array.isArray(data[r]) && !data[r].length))) {
-      return fail(`${required.join(", ")} zaroori hai`);
+      return fail(`${required.join(", ")} is required`);
     }
     return json({ item: await Model.create(data) }, 201);
   };
@@ -40,9 +40,9 @@ export function crudItem(Model, fields, required) {
       const { id } = await params;
       if (!isId(id)) return fail("Invalid id");
       const data = pick(await readBody(req), fields);
-      if (required.some((r) => r in data && !data[r])) return fail(`${required.join(", ")} khali nahi ho sakta`);
+      if (required.some((r) => r in data && !data[r])) return fail(`${required.join(", ")} cannot be empty`);
       const item = await Model.findByIdAndUpdate(id, { $set: data }, { new: true });
-      if (!item) return fail("Nahi mila", 404);
+      if (!item) return fail("Not found", 404);
       return json({ item });
     },
     async DELETE(_req, { params }) {

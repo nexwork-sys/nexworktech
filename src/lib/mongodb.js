@@ -4,7 +4,7 @@ const cached = globalThis._nexMongoose || (globalThis._nexMongoose = { conn: nul
 
 export async function connectDB() {
   if (!process.env.MONGODB_URI) {
-    throw new Error("MONGODB_URI .env.local mein set nahi hai");
+    throw new Error("MONGODB_URI is not set in .env.local");
   }
   if (cached.conn) return cached.conn;
   cached.promise ||= mongoose.connect(process.env.MONGODB_URI, { bufferCommands: false });

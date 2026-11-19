@@ -547,7 +547,7 @@ export default function NexworkTechWebsite() {
       setOwnerDirty(false);
       setOwnerMsg("✓ Saved to database!");
     } else {
-      setOwnerMsg(d.error || "Save nahi hua");
+      setOwnerMsg(d.error || "Could not save");
     }
   };
 
@@ -557,7 +557,7 @@ export default function NexworkTechWebsite() {
 
     const { ok, data } = await call("/api/enquiries", "POST", enquiryForm);
     if (!ok) {
-      alert(data.error || "Enquiry send nahi hui, dobara try karein");
+      alert(data.error || "Enquiry could not be sent. Please try again.");
       return;
     }
     setEnquirySent(true);
@@ -576,7 +576,7 @@ export default function NexworkTechWebsite() {
 
     const { ok, data } = await call("/api/reviews", "POST", reviewForm);
     if (!ok) {
-      alert(data.error || "Review submit nahi hua, dobara try karein");
+      alert(data.error || "Review could not be submitted. Please try again.");
       return;
     }
     setReviewSubmitted(true);
@@ -601,7 +601,7 @@ export default function NexworkTechWebsite() {
 
     const { ok, data } = await call(`/api/reviews/${id}`, "PATCH", { featured: !target.featured });
     if (!ok) {
-      setAdminReviewNotice(data.error || "Update nahi hua");
+      setAdminReviewNotice(data.error || "Update failed");
       setTimeout(() => setAdminReviewNotice(""), 4000);
       return;
     }
@@ -642,7 +642,7 @@ export default function NexworkTechWebsite() {
     e.preventDefault();
     const { ok, data } = await call("/api/auth/reset", "POST", forgotForm);
     if (ok) {
-      setForgotMsg({ type: "ok", text: "Password reset ho gaya! Ab naye password se login karein." });
+      setForgotMsg({ type: "ok", text: "Password reset successfully! Please log in with your new password." });
       setForgotForm({ recoveryKey: "", newPassword: "" });
       setTimeout(() => {
         setShowForgot(false);
@@ -656,7 +656,7 @@ export default function NexworkTechWebsite() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (pwForm.next !== pwForm.confirm) {
-      setPwMsg({ type: "err", text: "Naya password aur confirm password match nahi kar rahe" });
+      setPwMsg({ type: "err", text: "New password and confirm password do not match" });
       return;
     }
     const { ok, data } = await call("/api/auth/change-password", "POST", {
@@ -664,11 +664,11 @@ export default function NexworkTechWebsite() {
       next: pwForm.next,
     });
     if (ok) {
-      setPwMsg({ type: "ok", text: "✓ Password badal gaya! Baaki devices se logout ho gaye." });
+      setPwMsg({ type: "ok", text: "✓ Password changed! All other devices have been logged out." });
       setPwForm({ current: "", next: "", confirm: "" });
       setAdminUser(data.user);
     } else {
-      setPwMsg({ type: "err", text: data.error || "Password change nahi hua" });
+      setPwMsg({ type: "err", text: data.error || "Could not change password" });
     }
   };
 
@@ -1049,7 +1049,7 @@ export default function NexworkTechWebsite() {
               </h2>
 
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                Yeh hamara live engineered IoT automation bot hai jo poore ghar (Home) ki sabhi devices aur appliances ko real-time mein control karta hai. Neeche diye gaye button par click karke ise yahin live test kar sakte hain!
+                This is our live IoT automation bot that controls all the devices and appliances in a home in real time. Click the button below to test it live right here!
               </p>
 
               {/* Smart Home Features Controlled by the Bot */}
@@ -1156,12 +1156,12 @@ export default function NexworkTechWebsite() {
           </p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Our Projects</h2>
           <p className="text-sm text-slate-400 mt-3 max-w-xl">
-            Nexwork Tech ke banaye hue projects — details aur live links neeche.
+            Projects built by Nexwork Tech — details and live links below.
           </p>
         </div>
 
         {projects.length === 0 ? (
-          <p className="text-sm text-slate-500">Projects jaldi add honge.</p>
+          <p className="text-sm text-slate-500">Projects coming soon.</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {projects.map((pr) => (
@@ -1250,14 +1250,14 @@ export default function NexworkTechWebsite() {
           <Briefcase className="w-10 h-10 text-cyan-400 mx-auto mb-4" />
           <h2 className="text-3xl sm:text-4xl font-black text-white">Remote Work</h2>
           <p className="text-sm text-slate-300 max-w-xl mx-auto mt-3 leading-relaxed">
-            Aap humein kaam dena chahte hain, ya aapko kaam chahiye? Apna kaam bhejein, ya hamare diye hue kaam
-            (rate aur description ke saath) dekhkar interest dikhayein.
+            Want to hire us, or looking for work? Send us your project, or browse the work we have posted
+            (with rate and description) and show your interest.
           </p>
           <button
             onClick={() => setIsRemoteOpen(true)}
             className="mt-7 px-8 py-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-sm inline-flex items-center gap-2 hover:scale-105 transition-transform"
           >
-            Remote Work Shuru Karein <ArrowRight className="w-4 h-4" />
+            Start Remote Work <ArrowRight className="w-4 h-4" />
           </button>
         </motion.div>
       </section>
@@ -1280,7 +1280,7 @@ export default function NexworkTechWebsite() {
             </span>
           </h2>
           <p className="text-sm text-slate-400 mt-3">
-            Hamare clients aur bot testers ke chune hue reviews — aur neeche aap bhi apna review submit kar sakte hain.
+            Selected reviews from our clients and bot testers — you can also submit your own review below.
           </p>
         </motion.div>
 
@@ -1352,7 +1352,7 @@ export default function NexworkTechWebsite() {
               Write a Review
             </h3>
             <p className="text-xs text-slate-400 mt-1">
-              Apna naam aur email ID daal kar review submit karein. Admin approve karega toh aapka review yahan dikhega.
+              Enter your name and email to submit a review. It will appear here once the admin approves it.
             </p>
           </div>
 
@@ -1360,10 +1360,10 @@ export default function NexworkTechWebsite() {
             <div className="py-10 text-center space-y-3 bg-emerald-500/10 border border-emerald-400/25 rounded-2xl p-6">
               <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto" />
               <h4 className="text-lg font-bold text-white">
-                Thank You! Aapka Review Submit Ho Gaya Hai
+                Thank You! Your Review Has Been Submitted
               </h4>
               <p className="text-xs text-slate-300">
-                Admin dashboard mein aapka review bhej diya gaya hai.
+                Your review has been sent to the admin dashboard.
               </p>
             </div>
           ) : (
@@ -1376,7 +1376,7 @@ export default function NexworkTechWebsite() {
                   <input
                     type="text"
                     required
-                    placeholder="Apna poora naam likhein"
+                    placeholder="Enter your full name"
                     value={reviewForm.name}
                     onChange={(e) =>
                       setReviewForm({ ...reviewForm, name: e.target.value })
@@ -1455,7 +1455,7 @@ export default function NexworkTechWebsite() {
                 <textarea
                   rows={3}
                   required
-                  placeholder="NEXWORKTECH ya hamare IoT Home Bot ke baare mein apna experience likhein..."
+                  placeholder="Share your experience with NEXWORKTECH or our IoT Home Bot..."
                   value={reviewForm.comment}
                   onChange={(e) =>
                     setReviewForm({ ...reviewForm, comment: e.target.value })
@@ -1662,7 +1662,7 @@ export default function NexworkTechWebsite() {
                   <CheckCircle className="w-14 h-14 text-emerald-400 mx-auto animate-bounce" />
                   <h4 className="text-xl font-bold text-white">Enquiry Submitted!</h4>
                   <p className="text-xs text-slate-400">
-                    Humari team jald hi aapse sampark karegi. (Admin Panel mein save ho gaya hai)
+                    Our team will contact you shortly. (Saved in the Admin Panel)
                   </p>
                 </div>
               ) : (
@@ -1720,7 +1720,7 @@ export default function NexworkTechWebsite() {
                     <textarea
                       rows={3}
                       required
-                      placeholder="Apne project ke baare mein batayein..."
+                      placeholder="Tell us about your project..."
                       value={enquiryForm.message}
                       onChange={(e) =>
                         setEnquiryForm({ ...enquiryForm, message: e.target.value })
@@ -1796,13 +1796,13 @@ export default function NexworkTechWebsite() {
                         onClick={() => setShowForgot(true)}
                         className="text-xs text-slate-400 hover:text-cyan-400"
                       >
-                        Password bhool gaye?
+                        Forgot password?
                       </button>
                     </form>
                   ) : (
                     <form onSubmit={handleForgotReset} className="space-y-4 text-left">
                       <p className="text-[11px] text-slate-400 text-center">
-                        Server ki <code className="text-cyan-300">ADMIN_RESET_KEY</code> (.env) daal kar naya password set karein.
+                        Enter the server <code className="text-cyan-300">ADMIN_RESET_KEY</code> (.env) to set a new password.
                       </p>
                       <input
                         type="password"
@@ -1869,7 +1869,7 @@ export default function NexworkTechWebsite() {
 
                   {adminUser?.mustChangePassword && (
                     <div className="mt-4 p-3 rounded-xl bg-amber-500/15 border border-amber-400/30 text-xs text-amber-300 flex flex-wrap items-center justify-between gap-2">
-                      <span>⚠ Aap abhi default password use kar rahe hain. Security ke liye ise turant badlein.</span>
+                      <span>⚠ You are still using the default password. Please change it immediately for security.</span>
                       <button onClick={() => setActiveAdminTab("security")} className="px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold">
                         Change Now
                       </button>
@@ -1906,7 +1906,7 @@ export default function NexworkTechWebsite() {
                     <div className="space-y-4">
                       {enquiries.length === 0 ? (
                         <p className="text-sm text-slate-400 py-8 text-center">
-                          Abhi tak koi enquiry nahi aayi hai.
+                          No enquiries yet.
                         </p>
                       ) : (
                         enquiries.map((enq) => (
@@ -1947,7 +1947,7 @@ export default function NexworkTechWebsite() {
                     <div className="space-y-4">
                       <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-400/25 flex flex-wrap items-center justify-between gap-2">
                         <p className="text-xs text-cyan-200">
-                          Jo reviews aap yahan <strong>select</strong> karenge sirf wahi website par dikhenge. Select nahi kiya toh sirf aapko dikhega.
+                          Only the reviews you <strong>select</strong> here will be shown on the website. Unselected reviews are visible only to you.
                         </p>
                         <span className="px-3 py-1 rounded-full bg-cyan-400 text-slate-950 font-black text-xs">
                           On website: {featuredReviews.length}
@@ -1962,7 +1962,7 @@ export default function NexworkTechWebsite() {
 
                       {reviews.length === 0 ? (
                         <p className="text-sm text-slate-400 py-8 text-center">
-                          Abhi tak koi review submit nahi hua hai.
+                          No reviews submitted yet.
                         </p>
                       ) : (
                         reviews.map((rev) => (
@@ -2104,7 +2104,7 @@ export default function NexworkTechWebsite() {
                       </div>
 
                       <div className="pt-2 border-t border-white/10">
-                        <h5 className="text-xs font-bold text-slate-300 mb-3">Social Links (khali chhodenge toh icon nahi dikhega)</h5>
+                        <h5 className="text-xs font-bold text-slate-300 mb-3">Social Links (leave blank to hide the icon)</h5>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {[
                             ["linkedin", "LinkedIn profile link", "https://linkedin.com/in/..."],
@@ -2167,7 +2167,7 @@ export default function NexworkTechWebsite() {
                           </span>
                         )}
                         {ownerDirty && !ownerMsg && (
-                          <span className="text-[11px] text-amber-300">Unsaved changes — Save Changes dabayein.</span>
+                          <span className="text-[11px] text-amber-300">Unsaved changes — click Save Changes.</span>
                         )}
                       </div>
                     </div>
@@ -2204,7 +2204,7 @@ export default function NexworkTechWebsite() {
                         Update Password
                       </button>
                       <p className="text-[11px] text-slate-500">
-                        Password bhool jaayein toh login screen par &quot;Password bhool gaye?&quot; se server ki recovery key ke saath reset kar sakte hain.
+                        If you forget your password, use &quot;Forgot password?&quot; on the login screen with the server recovery key to reset it.
                       </p>
                     </form>
                   )}

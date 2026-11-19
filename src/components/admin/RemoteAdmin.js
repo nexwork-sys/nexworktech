@@ -38,7 +38,7 @@ export default function RemoteAdmin() {
   const toggle = async (j) => { await api(`/api/remote/jobs/${j.id}`, "PUT", { status: j.status === "open" ? "closed" : "open" }).catch((e) => alert(e.message)); load(); };
   const del = async (url, msg) => { if (!confirm(msg)) return; await api(url, "DELETE").catch((e) => alert(e.message)); load(); };
 
-  const tabs = [["jobs", `Meri taraf se kaam (${jobs.length})`], ["apps", `Interested log (${apps.length})`], ["requests", `Logon ka kaam (${requests.length})`]];
+  const tabs = [["jobs", `Work I posted (${jobs.length})`], ["apps", `Interested people (${apps.length})`], ["requests", `Work from visitors (${requests.length})`]];
 
   return (
     <div className="space-y-5">
@@ -51,32 +51,32 @@ export default function RemoteAdmin() {
       {sub === "jobs" && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[11px] text-slate-400">Yahan jo kaam dalenge wo &quot;Mujhe kaam chahiye&quot; wale logon ko rate aur description ke saath dikhega.</p>
-            {!f && <button onClick={() => setF({ ...EMPTY })} className={btnPrimary}><Plus className="w-4 h-4" /> Naya Kaam</button>}
+            <p className="text-[11px] text-slate-400">Work you post here is shown to visitors who choose &quot;I want work&quot;, with rate and description.</p>
+            {!f && <button onClick={() => setF({ ...EMPTY })} className={btnPrimary}><Plus className="w-4 h-4" /> New Work</button>}
           </div>
           {f && (
             <form onSubmit={save} className={`${card} p-5 space-y-4`}>
-              <div><Label>Kaam ka title *</Label><input required className={inp} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="ESP32 firmware developer" /></div>
+              <div><Label>Work title *</Label><input required className={inp} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="ESP32 firmware developer" /></div>
               <div><Label>Description</Label><textarea rows={4} className={inp} value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div><Label>Rate</Label><input className={inp} value={f.rate} onChange={(e) => setF({ ...f, rate: e.target.value })} placeholder="₹5,000" /></div>
                 <div><Label>Rate type</Label>
                   <select className={`${sel} w-full`} value={f.rateType} onChange={(e) => setF({ ...f, rateType: e.target.value })}>
-                    <option value="fixed">Fixed (poore kaam ka)</option><option value="hourly">Per hour</option><option value="monthly">Per month</option>
+                    <option value="fixed">Fixed (whole project)</option><option value="hourly">Per hour</option><option value="monthly">Per month</option>
                   </select>
                 </div>
                 <div><Label>Status</Label>
                   <select className={`${sel} w-full`} value={f.status} onChange={(e) => setF({ ...f, status: e.target.value })}>
-                    <option value="open">Open (UI par dikhega)</option><option value="closed">Closed (chhup jayega)</option>
+                    <option value="open">Open (visible on site)</option><option value="closed">Closed (hidden)</option>
                   </select>
                 </div>
               </div>
-              <div><Label>Skills (comma se alag)</Label><input className={inp} value={f.skills} onChange={(e) => setF({ ...f, skills: e.target.value })} placeholder="ESP32, MQTT, Python" /></div>
+              <div><Label>Skills (comma separated)</Label><input className={inp} value={f.skills} onChange={(e) => setF({ ...f, skills: e.target.value })} placeholder="ESP32, MQTT, Python" /></div>
               <Err>{err}</Err>
-              <div className="flex gap-3"><button className={btnPrimary}>{f.id ? "Update" : "Publish Kaam"}</button><button type="button" onClick={() => { setF(null); setErr(""); }} className={btnGhost}>Cancel</button></div>
+              <div className="flex gap-3"><button className={btnPrimary}>{f.id ? "Update" : "Publish Work"}</button><button type="button" onClick={() => { setF(null); setErr(""); }} className={btnGhost}>Cancel</button></div>
             </form>
           )}
-          {jobs.length === 0 && !f && <p className="text-xs text-slate-500 py-6 text-center">Abhi koi kaam post nahi kiya.</p>}
+          {jobs.length === 0 && !f && <p className="text-xs text-slate-500 py-6 text-center">No work posted yet.</p>}
           {jobs.map((j) => (
             <div key={j.id} className={`${card} p-4 flex flex-wrap items-start justify-between gap-4`}>
               <div className="min-w-[220px] flex-1">
@@ -91,7 +91,7 @@ export default function RemoteAdmin() {
               <div className="flex gap-2">
                 <button onClick={() => toggle(j)} className={btnGhost}>{j.status === "open" ? "Close" : "Reopen"}</button>
                 <button onClick={() => setF({ ...j, skills: (j.skills || []).join(", ") })} className={btnGhost}><Pencil className="w-3 h-3" /></button>
-                <button onClick={() => del(`/api/remote/jobs/${j.id}`, "Ye kaam delete karein?")} className={btnDanger}><Trash2 className="w-3 h-3" /></button>
+                <button onClick={() => del(`/api/remote/jobs/${j.id}`, "Delete this work?")} className={btnDanger}><Trash2 className="w-3 h-3" /></button>
               </div>
             </div>
           ))}
@@ -100,7 +100,7 @@ export default function RemoteAdmin() {
 
       {sub === "apps" && (
         <div className="space-y-3">
-          {apps.length === 0 && <p className="text-xs text-slate-500 py-6 text-center">Abhi kisi ne interest nahi dikhaya.</p>}
+          {apps.length === 0 && <p className="text-xs text-slate-500 py-6 text-center">No one has shown interest yet.</p>}
           {apps.map((a) => (
             <div key={a.id} className={`${card} p-4 flex flex-wrap items-start justify-between gap-4`}>
               <div className="min-w-[220px] flex-1 space-y-1">
@@ -114,7 +114,7 @@ export default function RemoteAdmin() {
                 {a.link && <a href={/^https?:\/\//.test(a.link) ? a.link : `https://${a.link}`} target="_blank" rel="noreferrer" className="text-xs text-cyan-400 hover:underline inline-flex items-center gap-1">{a.link} <ExternalLink className="w-3 h-3" /></a>}
                 {a.message && <p className="text-xs text-slate-300 bg-black/30 p-3 rounded-xl border border-white/5 whitespace-pre-line">{a.message}</p>}
               </div>
-              <button onClick={() => del(`/api/remote/applications/${a.id}`, "Ye entry delete karein?")} className={btnDanger}><Trash2 className="w-3 h-3" /></button>
+              <button onClick={() => del(`/api/remote/applications/${a.id}`, "Delete this entry?")} className={btnDanger}><Trash2 className="w-3 h-3" /></button>
             </div>
           ))}
         </div>
@@ -122,7 +122,7 @@ export default function RemoteAdmin() {
 
       {sub === "requests" && (
         <div className="space-y-3">
-          {requests.length === 0 && <p className="text-xs text-slate-500 py-6 text-center">Abhi kisi ne kaam nahi bheja.</p>}
+          {requests.length === 0 && <p className="text-xs text-slate-500 py-6 text-center">No one has sent work yet.</p>}
           {requests.map((r) => (
             <div key={r.id} className={`${card} p-4 flex flex-wrap items-start justify-between gap-4`}>
               <div className="min-w-[220px] flex-1 space-y-1">
@@ -134,7 +134,7 @@ export default function RemoteAdmin() {
                 <p className="text-xs text-slate-300">{r.name} · <span className="text-cyan-300">{r.contact}</span></p>
                 <p className="text-xs text-slate-300 bg-black/30 p-3 rounded-xl border border-white/5 whitespace-pre-line">{r.description}</p>
               </div>
-              <button onClick={() => del(`/api/remote/requests/${r.id}`, "Ye request delete karein?")} className={btnDanger}><Trash2 className="w-3 h-3" /></button>
+              <button onClick={() => del(`/api/remote/requests/${r.id}`, "Delete this request?")} className={btnDanger}><Trash2 className="w-3 h-3" /></button>
             </div>
           ))}
         </div>

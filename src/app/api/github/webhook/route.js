@@ -7,7 +7,7 @@ import { json, fail } from "@/lib/api";
 // Content type: application/json, Secret: GITHUB_WEBHOOK_SECRET, Event: "Just the push event"
 export async function POST(req) {
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
-  if (!secret) return fail("GITHUB_WEBHOOK_SECRET set nahi hai", 503);
+  if (!secret) return fail("GITHUB_WEBHOOK_SECRET is not set", 503);
 
   const raw = await req.text();
   const sig = req.headers.get("x-hub-signature-256") || "";

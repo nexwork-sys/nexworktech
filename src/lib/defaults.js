@@ -9,7 +9,7 @@ export const DEFAULT_SERVICES = [
     tag: "01 / INTELLIGENCE",
     title: "AI Automation",
     description:
-      "Custom AI agents, intelligent workflow automation, WhatsApp/Instagram chatbots, CRM pipelines aur business processes ko 10x fast banane ke liye smart AI solutions.",
+      "Custom AI agents, intelligent workflow automation, WhatsApp/Instagram chatbots, CRM pipelines and business processes — smart AI solutions to make your business 10x faster.",
     features: ["Custom LLM Agents & Chatbots", "Workflow & Process Automation", "WhatsApp / Instagram Bots"],
     order: 1,
   },
@@ -18,7 +18,7 @@ export const DEFAULT_SERVICES = [
     tag: "02 / AIoT",
     title: "AIoT Development",
     description:
-      "AI + IoT ek saath: ESP32/Arduino/Raspberry Pi sensors, cloud dashboards aur smart devices jo data se khud decision lete hain — hardware se cloud tak end-to-end.",
+      "AI + IoT together: ESP32/Arduino/Raspberry Pi sensors, cloud dashboards and smart devices that make decisions from data — end-to-end from hardware to cloud.",
     features: ["Smart Home & Industrial AIoT", "Real-Time Cloud Dashboards", "Embedded Firmware + AI Logic"],
     order: 2,
   },
@@ -49,7 +49,7 @@ export const DEFAULT_PROJECTS = [
     tag: "Web App • Scrap Pickup Platform",
     url: "https://www.xoscrap.com",
     description:
-      "Ghar baithe scrap bechne ka platform — live rates, doorstep pickup request form aur admin panel. Varanasi me live.",
+      "A platform to sell scrap from home — live rates, doorstep pickup request form and admin panel. Live in Varanasi.",
     images: [
       "https://www.xoscrap.com/images/a.jpeg",
       "https://www.xoscrap.com/images/b.jpeg",
@@ -63,7 +63,7 @@ export const DEFAULT_PROJECTS = [
     tag: "School Website + ERP",
     url: "https://www.thelittlemoonacademy.com",
     description:
-      "Nursery se Class VIII school ki website — toppers, events, admission inquiry aur student/teacher ERP login.",
+      "Website for a Nursery to Class VIII school — toppers, events, admission enquiry and student/teacher ERP login.",
     images: [
       "https://thelittlemoonacademy.com/_next/image?url=%2Flogo.png&w=256&q=75",
       "https://thelittlemoonacademy.com/activities/science-1.svg",
@@ -78,7 +78,7 @@ export const DEFAULT_OWNER = {
   name: "Ritik Kosh",
   role: "Founder & Engineer, Nexwork Tech",
   photo: "/ritik.jpg",
-  bio: "B.Tech engineer leading Nexwork Tech. Kaam: AI Automation aur AIoT products — smart bots se leke hardware + cloud tak complete solutions.",
+  bio: "B.Tech engineer leading Nexwork Tech. Focus: AI Automation and AIoT products — complete solutions from smart bots to hardware + cloud.",
   experience: "B.Tech • AI Automation • AIoT",
   location: "India",
   email: "contact@nexworktech.com",

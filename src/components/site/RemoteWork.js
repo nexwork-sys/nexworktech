@@ -47,7 +47,7 @@ function Panel({ onClose }) {
     setErr("");
     const { ok, data } = await post("/api/remote/requests", give);
     setBusy(false);
-    if (!ok) return setErr(data.error || "Send nahi hua, dobara try karein");
+    if (!ok) return setErr(data.error || "Could not send. Please try again.");
     setGive({ name: "", contact: "", title: "", description: "", budget: "" });
     setStep("done");
   };
@@ -58,7 +58,7 @@ function Panel({ onClose }) {
     setErr("");
     const { ok, data } = await post("/api/remote/applications", { ...apply, jobId: job?.id, jobTitle: job?.title });
     setBusy(false);
-    if (!ok) return setErr(data.error || "Send nahi hua, dobara try karein");
+    if (!ok) return setErr(data.error || "Could not send. Please try again.");
     setApply({ name: "", contact: "", skills: "", link: "", message: "" });
     setStep("done");
   };
@@ -97,24 +97,24 @@ function Panel({ onClose }) {
 
             {step === "choose" && (
               <div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1 mb-2">Aapko kya chahiye?</h3>
-                <p className="text-xs text-slate-400 mb-6">Kya aap humein kaam dena chahte hain, ya aapko kaam chahiye?</p>
+                <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1 mb-2">What do you need?</h3>
+                <p className="text-xs text-slate-400 mb-6">Do you want to give us work, or are you looking for work?</p>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <button
                     onClick={() => setStep("give")}
                     className="text-left p-6 rounded-2xl bg-gradient-to-b from-cyan-500/15 to-transparent border border-cyan-400/30 hover:border-cyan-400 transition-all"
                   >
                     <HandCoins className="w-8 h-8 text-cyan-400 mb-3" />
-                    <p className="text-lg font-bold text-white">Mujhe kaam dena hai</p>
-                    <p className="text-xs text-slate-400 mt-1">Apna project / kaam bhejein. Admin seedha aapse contact karega.</p>
+                    <p className="text-lg font-bold text-white">I want to give work</p>
+                    <p className="text-xs text-slate-400 mt-1">Send your project or task. The admin will contact you directly.</p>
                   </button>
                   <button
                     onClick={openFind}
                     className="text-left p-6 rounded-2xl bg-gradient-to-b from-emerald-500/15 to-transparent border border-emerald-400/30 hover:border-emerald-400 transition-all"
                   >
                     <Briefcase className="w-8 h-8 text-emerald-400 mb-3" />
-                    <p className="text-lg font-bold text-white">Mujhe kaam chahiye</p>
-                    <p className="text-xs text-slate-400 mt-1">Admin ke diye kaam dekhein — rate aur description ke saath — aur interest dikhayein.</p>
+                    <p className="text-lg font-bold text-white">I want work</p>
+                    <p className="text-xs text-slate-400 mt-1">Browse work posted by the admin — with rate and description — and show your interest.</p>
                   </button>
                 </div>
               </div>
@@ -122,27 +122,27 @@ function Panel({ onClose }) {
 
             {step === "give" && (
               <form onSubmit={submitGive} className="space-y-4">
-                <h3 className="text-2xl font-bold text-white mt-1">Apna kaam bhejein</h3>
+                <h3 className="text-2xl font-bold text-white mt-1">Send your work</h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <input required className={inp} placeholder="Aapka naam *" value={give.name} onChange={(e) => setGive({ ...give, name: e.target.value })} />
                   <input required className={inp} placeholder="Phone / WhatsApp / Email *" value={give.contact} onChange={(e) => setGive({ ...give, contact: e.target.value })} />
                 </div>
-                <input required className={inp} placeholder="Kaam ka title (jaise: WhatsApp AI bot banana) *" value={give.title} onChange={(e) => setGive({ ...give, title: e.target.value })} />
-                <textarea required rows={4} className={inp} placeholder="Kaam ki detail *" value={give.description} onChange={(e) => setGive({ ...give, description: e.target.value })} />
+                <input required className={inp} placeholder="Work title (e.g. Build a WhatsApp AI bot) *" value={give.title} onChange={(e) => setGive({ ...give, title: e.target.value })} />
+                <textarea required rows={4} className={inp} placeholder="Work details *" value={give.description} onChange={(e) => setGive({ ...give, description: e.target.value })} />
                 <input className={inp} placeholder="Budget (optional)" value={give.budget} onChange={(e) => setGive({ ...give, budget: e.target.value })} />
                 {err && <p className="text-xs text-rose-400">{err}</p>}
                 <button disabled={busy} className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-sm disabled:opacity-60 inline-flex items-center justify-center gap-2">
-                  <Send className="w-4 h-4" /> {busy ? "Bhej rahe hain..." : "Admin ko bhejein"}
+                  <Send className="w-4 h-4" /> {busy ? "Sending..." : "Send to admin"}
                 </button>
               </form>
             )}
 
             {step === "find" && (
               <div>
-                <h3 className="text-2xl font-bold text-white mt-1 mb-4">Available kaam</h3>
+                <h3 className="text-2xl font-bold text-white mt-1 mb-4">Available work</h3>
                 {jobs === null && <p className="text-sm text-slate-400">Loading...</p>}
                 {jobs && jobs.length === 0 && (
-                  <p className="text-sm text-slate-400 py-8 text-center">Abhi koi kaam open nahi hai. Thodi der baad dekhein.</p>
+                  <p className="text-sm text-slate-400 py-8 text-center">No work is open right now. Please check back later.</p>
                 )}
                 <div className="space-y-3">
                   {jobs?.map((j) => (
@@ -168,7 +168,7 @@ function Panel({ onClose }) {
                         onClick={() => { setJob(j); setStep("apply"); }}
                         className="px-5 py-2 rounded-xl bg-emerald-400 text-slate-950 font-bold text-xs"
                       >
-                        Mujhe interest hai
+                        I'm interested
                       </button>
                     </div>
                   ))}
@@ -178,18 +178,18 @@ function Panel({ onClose }) {
 
             {step === "apply" && job && (
               <form onSubmit={submitApply} className="space-y-4">
-                <h3 className="text-2xl font-bold text-white mt-1">Apni detail bhejein</h3>
-                <p className="text-xs text-cyan-300">Kaam: {job.title}{job.rate ? ` · ${job.rate} ${RATE_TYPE[job.rateType]}` : ""}</p>
+                <h3 className="text-2xl font-bold text-white mt-1">Send your details</h3>
+                <p className="text-xs text-cyan-300">Work: {job.title}{job.rate ? ` · ${job.rate} ${RATE_TYPE[job.rateType]}` : ""}</p>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <input required className={inp} placeholder="Aapka naam *" value={apply.name} onChange={(e) => setApply({ ...apply, name: e.target.value })} />
                   <input required className={inp} placeholder="Phone / WhatsApp / Email *" value={apply.contact} onChange={(e) => setApply({ ...apply, contact: e.target.value })} />
                 </div>
                 <input className={inp} placeholder="Aapki skills (jaise: ESP32, Python, n8n)" value={apply.skills} onChange={(e) => setApply({ ...apply, skills: e.target.value })} />
                 <input className={inp} placeholder="Portfolio / GitHub / LinkedIn link (optional)" value={apply.link} onChange={(e) => setApply({ ...apply, link: e.target.value })} />
-                <textarea rows={3} className={inp} placeholder="Apne baare mein kuch likhein (experience, kitna time de sakte hain)" value={apply.message} onChange={(e) => setApply({ ...apply, message: e.target.value })} />
+                <textarea rows={3} className={inp} placeholder="Tell us about yourself (experience, time you can give)" value={apply.message} onChange={(e) => setApply({ ...apply, message: e.target.value })} />
                 {err && <p className="text-xs text-rose-400">{err}</p>}
                 <button disabled={busy} className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 font-bold text-sm disabled:opacity-60 inline-flex items-center justify-center gap-2">
-                  <Send className="w-4 h-4" /> {busy ? "Bhej rahe hain..." : "Admin se connect karein"}
+                  <Send className="w-4 h-4" /> {busy ? "Sending..." : "Connect with admin"}
                 </button>
               </form>
             )}
@@ -197,8 +197,8 @@ function Panel({ onClose }) {
             {step === "done" && (
               <div className="py-12 text-center space-y-3">
                 <CheckCircle className="w-14 h-14 text-emerald-400 mx-auto" />
-                <h4 className="text-xl font-bold text-white">Bhej diya gaya!</h4>
-                <p className="text-xs text-slate-400">Admin aapse jald hi contact karega.</p>
+                <h4 className="text-xl font-bold text-white">Sent!</h4>
+                <p className="text-xs text-slate-400">The admin will contact you shortly.</p>
                 <button onClick={onClose} className="mt-2 px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-white">Close</button>
               </div>
             )}

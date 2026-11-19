@@ -9,7 +9,7 @@ const WEEK = 60 * 60 * 24 * 7;
 
 function secret() {
   const s = process.env.JWT_SECRET;
-  if (!s || s.length < 16) throw new Error("JWT_SECRET .env.local mein set karein (kam se kam 16 characters)");
+  if (!s || s.length < 16) throw new Error("Set JWT_SECRET in .env.local (at least 16 characters)");
   return new TextEncoder().encode(s);
 }
 

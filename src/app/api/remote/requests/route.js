@@ -10,13 +10,13 @@ export async function GET() {
 
 // Public: koi admin ko kaam dena chahta hai
 export async function POST(req) {
-  if (!rateLimit(`wreq:${clientIp(req)}`, 6, 60 * 60 * 1000)) return fail("Thodi der baad try karein", 429);
+  if (!rateLimit(`wreq:${clientIp(req)}`, 6, 60 * 60 * 1000)) return fail("Please try again later", 429);
   const b = await readBody(req);
   const name = String(b.name || "").trim().slice(0, 120);
   const contact = String(b.contact || "").trim().slice(0, 200);
   const title = String(b.title || "").trim().slice(0, 160);
   const description = String(b.description || "").trim().slice(0, 4000);
-  if (!name || !contact || !title || !description) return fail("Naam, contact, kaam ka title aur detail zaroori hai");
+  if (!name || !contact || !title || !description) return fail("Name, contact, work title and details are required");
   await connectDB();
   await WorkRequest.create({ name, contact, title, description, budget: String(b.budget || "").slice(0, 80), date: istDate() });
   return json({ ok: true }, 201);

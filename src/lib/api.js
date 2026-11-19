@@ -18,8 +18,8 @@ export async function readBody(req) {
 export async function guard(role) {
   await connection(); // request-time only (build ke waqt DB access nahi)
   const user = await getCurrentUser(); // login hone par hi DB connect hota hai
-  if (!user) return { error: fail("Pehle login karein", 401) };
-  if (role === "admin" && user.role !== "admin") return { error: fail("Sirf admin ke liye", 403) };
+  if (!user) return { error: fail("Please log in first", 401) };
+  if (role === "admin" && user.role !== "admin") return { error: fail("Admins only", 403) };
   return { user };
 }
 

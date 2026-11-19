@@ -14,9 +14,9 @@ export async function POST(req) {
   if (error) return error;
   const b = await readBody(req);
   const username = String(b.username || "").toLowerCase().trim();
-  if (!/^[a-z0-9._-]{3,30}$/.test(username)) return fail("Username 3-30 characters ka ho (a-z, 0-9, . _ -)");
-  if (!b.name?.trim()) return fail("Naam zaroori hai");
-  if (!b.password || String(b.password).length < 6) return fail("Password kam se kam 6 characters ka ho");
+  if (!/^[a-z0-9._-]{3,30}$/.test(username)) return fail("Username must be 3-30 characters (a-z, 0-9, . _ -)");
+  if (!b.name?.trim()) return fail("Name is required");
+  if (!b.password || String(b.password).length < 6) return fail("Password must be at least 6 characters");
   try {
     const user = await User.create({
       username,
@@ -29,7 +29,7 @@ export async function POST(req) {
     });
     return json({ user }, 201);
   } catch (e) {
-    if (e?.code === 11000) return fail("Ye username pehle se maujood hai");
+    if (e?.code === 11000) return fail("This username already exists");
     throw e;
   }
 }

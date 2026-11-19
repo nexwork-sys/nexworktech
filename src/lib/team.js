@@ -10,9 +10,9 @@ export const sameId = (a, b) => String(a?._id || a) === String(b?._id || b);
 export async function loadProject(id, user) {
   if (!isId(id)) return { error: fail("Invalid project id") };
   const project = await Project.findById(id);
-  if (!project) return { error: fail("Project nahi mila", 404) };
+  if (!project) return { error: fail("Project not found", 404) };
   const allowed = user.role === "admin" || project.members.some((m) => sameId(m, user._id));
-  if (!allowed) return { error: fail("Aap is project ke member nahi hain", 403) };
+  if (!allowed) return { error: fail("You are not a member of this project", 403) };
   return { project };
 }
 

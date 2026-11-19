@@ -44,7 +44,7 @@ export default function Chat({ user, initialWith = null }) {
     <div className={`${card} flex flex-col h-[70vh] min-h-[420px] flex-1 min-w-0`}>
       <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3">
         {isAdmin && !active ? (
-          <p className="text-xs text-slate-400">Chat shuru karne ke liye employee chunein</p>
+          <p className="text-xs text-slate-400">Select an employee to start chatting</p>
         ) : (
           <>
             <Avatar name={activeUser?.name || "?"} />
@@ -58,7 +58,7 @@ export default function Chat({ user, initialWith = null }) {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {(!isAdmin || active) && messages.length === 0 && (
-          <p className="text-xs text-slate-500 text-center mt-10">Abhi koi message nahi. Pehla message bhejein.</p>
+          <p className="text-xs text-slate-500 text-center mt-10">No messages yet. Send the first message.</p>
         )}
         {messages.map((m) => {
           const mine = String(m.sender) === user.id;
@@ -76,7 +76,7 @@ export default function Chat({ user, initialWith = null }) {
 
       {(!isAdmin || active) && (
         <form onSubmit={send} className="p-3 border-t border-white/10 flex gap-2">
-          <input className={inp} placeholder={isAdmin ? "Kaam ya message likhein..." : "Admin ko message likhein..."} value={text} onChange={(e) => setText(e.target.value)} />
+          <input className={inp} placeholder={isAdmin ? "Write a task or message..." : "Write a message to admin..."} value={text} onChange={(e) => setText(e.target.value)} />
           <button className={btnPrimary} aria-label="Send"><Send className="w-4 h-4" /></button>
         </form>
       )}
@@ -89,13 +89,13 @@ export default function Chat({ user, initialWith = null }) {
   return (
     <div className="flex flex-col md:flex-row gap-4">
       <div className={`${card} md:w-72 shrink-0 p-2 space-y-1 max-h-[70vh] overflow-y-auto`}>
-        {threads.length === 0 && <p className="text-xs text-slate-500 p-3">Pehle Employees tab mein employee add karein.</p>}
+        {threads.length === 0 && <p className="text-xs text-slate-500 p-3">Add an employee in the Employees tab first.</p>}
         {threads.map((t) => (
           <button key={t.user.id} onClick={() => { setActive(t.user.id); setMessages([]); }} className={`w-full text-left p-2.5 rounded-xl flex items-center gap-3 transition-all ${active === t.user.id ? "bg-cyan-400/15 border border-cyan-400/30" : "hover:bg-white/5 border border-transparent"}`}>
             <Avatar name={t.user.name} />
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold text-white truncate">{t.user.name}</p>
-              <p className="text-[10px] text-slate-500 truncate">{t.last ? t.last.text : "Koi message nahi"}</p>
+              <p className="text-[10px] text-slate-500 truncate">{t.last ? t.last.text : "No messages"}</p>
             </div>
             {t.unread > 0 && <span className="px-1.5 py-0.5 rounded-full bg-cyan-400 text-slate-950 text-[10px] font-black">{t.unread}</span>}
           </button>

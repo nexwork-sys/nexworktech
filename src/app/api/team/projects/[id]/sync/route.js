@@ -10,7 +10,7 @@ export async function POST(_req, { params }) {
   const { id } = await params;
   const { project, error: e2 } = await loadProject(id, user);
   if (e2) return e2;
-  if (!project.repo) return fail("Is project mein GitHub repo set nahi hai");
+  if (!project.repo) return fail("No GitHub repo is set for this project");
 
   try {
     const commits = await fetchRepoCommits(project.repo, 60);

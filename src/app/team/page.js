@@ -54,7 +54,7 @@ export default function TeamPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {user.mustChangePassword && (
           <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-400/30 text-xs text-amber-300 flex flex-wrap items-center justify-between gap-2">
-            <span>⚠ Aap temporary/default password use kar rahe hain. Apna password badal lein.</span>
+            <span>⚠ You are using a temporary/default password. Please change your password.</span>
             <button onClick={() => { setTab("account"); setProjectId(null); }} className="px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold">Change Now</button>
           </div>
         )}
@@ -108,7 +108,7 @@ function Login({ onLogin }) {
         <input type="password" className={`${inp} text-center`} placeholder="Password" autoComplete="current-password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} />
         <Err>{err}</Err>
         <button disabled={busy} className={`${btnPrimary} w-full py-3`}>{busy ? "Checking..." : "Login"}</button>
-        <p className="text-[11px] text-slate-500">Admin password bhool gaye? Website ke Admin Login se reset karein.</p>
+        <p className="text-[11px] text-slate-500">Forgot the admin password? Reset it from the website Admin Login.</p>
       </form>
     </div>
   );

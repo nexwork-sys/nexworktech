@@ -9,7 +9,7 @@ export async function PATCH(req, { params }) {
   if (!isId(id)) return fail("Invalid id");
   const { featured } = await readBody(req);
   const review = await Review.findById(id);
-  if (!review) return fail("Review nahi mila", 404);
+  if (!review) return fail("Review not found", 404);
 
   review.featured = !!featured;
   await review.save();

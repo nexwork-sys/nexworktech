@@ -22,8 +22,8 @@ export async function POST(req) {
   const { user, error } = await guard("admin");
   if (error) return error;
   const b = await readBody(req);
-  if (!b.name?.trim()) return fail("Project ka naam zaroori hai");
-  if (b.repo && !parseRepo(b.repo)) return fail("GitHub repo format galat hai (owner/repo ya URL)");
+  if (!b.name?.trim()) return fail("Project name is required");
+  if (b.repo && !parseRepo(b.repo)) return fail("Invalid GitHub repo format (owner/repo or URL)");
 
   const project = await Project.create({
     name: b.name.trim(),
