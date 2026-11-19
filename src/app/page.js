@@ -1079,6 +1079,18 @@ export default function NexworkTechWebsite() {
               {/* Action Buttons: Open Live Bot + Toggle Inline Preview */}
               <div className="flex flex-wrap items-center gap-4 pt-2">
 
+                {owner.whatsapp && owner.whatsapp.replace(/\D/g, "") && (
+                  <a
+                    href={/^https?:\/\//i.test(owner.whatsapp) ? owner.whatsapp : `https://wa.me/${owner.whatsapp.replace(/\D/g, "")}?text=status`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-7 py-4 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 font-black text-sm flex items-center gap-2.5 shadow-xl shadow-emerald-500/25 hover:scale-105 transition-transform"
+                  >
+                    <span>Control on WhatsApp</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+
                 <button
                   onClick={() => setShowBotIframe((prev) => !prev)}
                   className="px-6 py-4 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold text-sm flex items-center gap-2 transition-all"
@@ -1114,7 +1126,7 @@ export default function NexworkTechWebsite() {
                     <span className="text-cyan-400 font-bold">&gt; DEVICES:</span> Living Room Lights, Ceiling Fan, Main Gate, Smart Plugs Connected
                   </div>
                   <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-400/20 text-emerald-200">
-                    <span className="font-bold">&gt; PUBLIC TEST MODE:</span> Click &ldquo;Test Right Here&rdquo; to interact with the live control panel.
+                    <span className="font-bold">&gt; PUBLIC TEST MODE:</span> Message the bot on WhatsApp, or click &ldquo;Test Right Here&rdquo; to try the control panel.
                   </div>
                 </div>
               </div>
@@ -1138,6 +1150,7 @@ export default function NexworkTechWebsite() {
                 <div className="rounded-2xl overflow-hidden border border-white/15 bg-black h-[520px]">
                   <iframe
                     src="/demo/smart-home.html"
+                    allow="microphone; autoplay"
                     title="NEXWORKTECH Smart Home IoT Bot"
                     className="w-full h-full border-0"
                   />
@@ -2110,7 +2123,7 @@ export default function NexworkTechWebsite() {
                             ["linkedin", "LinkedIn profile link", "https://linkedin.com/in/..."],
                             ["instagram", "Instagram link", "https://instagram.com/..."],
                             ["facebook", "Facebook link", "https://facebook.com/..."],
-                            ["whatsapp", "WhatsApp number ya link", "91XXXXXXXXXX"],
+                            ["whatsapp", "WhatsApp number or link", "91XXXXXXXXXX"],
                             ["youtube", "YouTube link (optional)", "https://youtube.com/@..."],
                           ].map(([k, label, ph]) => (
                             <div key={k}>

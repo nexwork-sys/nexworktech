@@ -34,9 +34,10 @@ button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radiu
 @media(prefers-reduced-motion:reduce){.alarm{animation:none}}
 .bar{height:12px;border-radius:6px;background:rgba(127,160,190,.25);overflow:hidden}
 .bar i{display:block;height:100%;background:var(--cool);transition:width .4s}
-.chat{height:200px;overflow:auto;background:rgba(0,0,0,.18);border-radius:10px;padding:8px;font-size:.85rem;display:flex;flex-direction:column;gap:6px}
+.chat{height:230px;overflow:auto;background:rgba(0,0,0,.18);border-radius:10px;padding:8px;font-size:.85rem;display:flex;flex-direction:column;gap:6px}
 .m{max-width:85%;padding:6px 9px;border-radius:9px;white-space:pre-wrap}
-.me{align-self:flex-end;background:#0b6e55;color:#fff}.bot{align-self:flex-start;background:#26384a}
+.me{align-self:flex-end;background:#0b6e55;color:#fff}.bot{align-self:flex-start;background:#26384a;color:#fff}
+.b.rec{background:#c0392b;color:#fff;border-color:#c0392b}
 .in{display:flex;gap:6px;margin-top:8px}
 .in input{flex:1;border-radius:8px;border:1px solid #567;background:transparent;color:var(--ink);padding:8px;font-size:1rem}
 :focus-visible{outline:2px solid var(--cool);outline-offset:2px}
@@ -46,13 +47,13 @@ button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radiu
 <body>
 <header>
   <h1>Smart Home + Water Tank Demo</h1>
-  <p>Right side ke app panel se ya chat se control karo. Room live badlega.</p>
+  <p>Control it from the app panel on the right or from the chat. The room updates live.</p>
 </header>
 <div class="wrap">
   <div>
     <div class="card">
       <h2>Room view</h2>
-      <div class="alarm" id="alarm" role="alert">🚨 Door Open Alert! Darwaza khula hai</div>
+      <div class="alarm" id="alarm" role="alert">🚨 Door Open Alert! The door is open</div>
       <svg id="room" viewBox="0 0 1498 1050" role="img" aria-label="Room with two lights, fan, AC and door">
         <defs>
           <radialGradient id="dk1"><stop offset="0" stop-color="#000" stop-opacity=".62"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
@@ -88,7 +89,7 @@ button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radiu
       <p class="tag" id="roomcap"></p>
     </div>
     <div class="card" style="margin-top:14px">
-      <h2>Water tank (auto pump)</h2><p class="tag" style="margin:0 0 8px">Pump ON hone par tank bharta hai, 25% se kam par auto ON, 100% par auto OFF.</p>
+      <h2>Water tank (auto pump)</h2><p class="tag" style="margin:0 0 8px">The tank fills while the pump is ON. Auto mode: pump ON below 25%, OFF at 100%.</p>
       <svg id="tank" viewBox="0 0 640 420" role="img" aria-label="Rooftop water tank with auto pump">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4f5"/><stop offset="1" stop-color="#d9f0ff"/></linearGradient>
@@ -139,7 +140,7 @@ button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radiu
         <circle id="pumpc" cx="530" cy="335" r="18" fill="#3f3d3a" stroke="#cfd8df" stroke-width="3"/>
         <text id="pumptxt" x="530" y="340" font-size="13" font-weight="700" text-anchor="middle" fill="#fff" font-family="Segoe UI,Arial,sans-serif">OFF</text>
         <text x="530" y="310" font-size="12" text-anchor="middle" fill="#14263a">Pump</text>
-        <text x="95" y="146" font-size="12" text-anchor="end" fill="#14263a">Chhat par tank</text>
+        <text x="95" y="146" font-size="12" text-anchor="end" fill="#14263a">Rooftop tank</text>
       </svg>
     </div>
   </div>
@@ -157,14 +158,14 @@ button.b{background:rgba(127,160,190,.25);color:var(--ink);border:0;border-radiu
         <div class="tile" style="grid-column:span 2"><b>Water level: <span id="wl">30%</span> · Pump <span id="wp">OFF</span></b><div class="bar"><i id="wb" style="width:30%"></i></div>
           <div class="row"><button class="b" id="wdn">Use water −10</button><button class="b" id="wup">Fill +10</button></div>
           <div class="row"><b>Auto mode</b><button class="sw" id="s-auto" aria-label="Auto mode"></button></div>
-          <small>Auto ON: level 25% se kam → pump ON, 100% → pump OFF.</small></div>
+          <small>Auto ON: level below 25% → pump ON, 100% → pump OFF.</small></div>
       </div>
     </div>
     <div class="card" style="margin-top:14px">
       <h2>💬 Chat commands</h2>
       <div class="chat" id="chat" aria-live="polite"></div>
-      <form class="in" id="f"><input id="q" placeholder="light on, fan off, ac on, temp 22, door status, water level" autocomplete="off"><button class="b" type="submit">Send</button></form>
-      <p class="tag" id="link">Standalone mode: yeh chat page ke andar chalti hai. Real WhatsApp ke liye bridge server chalao (README).</p>
+      <form class="in" id="f"><input id="q" placeholder="Type or tap 🎤 and say: light on, water level..." autocomplete="off"><button class="b" type="button" id="mic" aria-label="Speak a command" title="Speak a command">🎤</button><button class="b" type="submit">Send</button></form>
+      <p class="tag" id="link">Demo: type a command or tap 🎤 and speak. Everything runs inside this page.</p>
     </div>
   </div>
 </div>
@@ -218,21 +219,76 @@ $('tdn').onclick=()=>{setTemp(S.temp-1);render();};
 $('wup').onclick=()=>{S.water=clamp(S.water+10,0,100);render();};
 $('wdn').onclick=()=>{S.water=clamp(S.water-10,0,100);render();};
 
+const HELP='Try:\n• light on / lights off / light 1 on\n• fan on / fan off\n• ac on / ac off / temp 22\n• door open / door close / door status\n• water level (shows level and pump)\n• pump on / pump off / auto mode on\n• status (everything at once)';
+const onoff=v=>v?'ON':'OFF';
+function statusText(){return `💡 Light 1: ${onoff(S.l1)}\n💡 Light 2: ${onoff(S.l2)}\n🌀 Fan: ${onoff(S.fan)}\n❄️ AC: ${S.ac?'ON at '+S.temp+'°C':'OFF'}\n🚪 Door: ${S.door?'OPEN':'Closed'}\n💧 Water: ${S.water}% · Pump ${onoff(S.pump)}${S.auto?' (auto)':' (manual)'}`;}
+function waterText(){return `💧 Water level is ${S.water}%.\nPump is ${onoff(S.pump)}${S.auto?' (auto mode)':' (manual mode)'}.`;}
 function command(text){
-  const c=text.toLowerCase().trim();let m;
-  const on=/\bon\b/.test(c),off=/\boff\b/.test(c);
-  const dev=[['light 1','l1','Light 1'],['light 2','l2','Light 2'],['light','l1','Light 1'],['fan','fan','Fan'],['ac','ac','AC']].find(d=>new RegExp('\\b'+d[0]+'\\b').test(c));
-  if(dev&&(on||off)){S[dev[1]]=on;render();return `✅ ${dev[2]} ${on?'ON':'OFF'}`;}
-  if(m=c.match(/temp\w*\s*(\d{2})/)){const t=+m[1];if(t<16||t>30)return '⚠️ Temp 16 se 30 ke beech bhejo';setTemp(t);render();return `❄️ AC temperature ${S.temp}°C`;}
-  if(/door/.test(c)){if(on||/open/.test(c)){S.door=true;render();return '🚨 Door open! Alarm active';}if(off||/close/.test(c)){S.door=false;render();return '🚪 Door closed';}return `Door: ${S.door?'OPEN 🚨':'Closed'}`;}
-  if(/water|tank/.test(c))return `💧 Water ${S.water}% · Pump ${S.pump?'ON':'OFF'}${S.auto?' (auto)':''}`;
-  if(/status/.test(c))return `L1 ${S.l1?'ON':'OFF'}, L2 ${S.l2?'ON':'OFF'}, Fan ${S.fan?'ON':'OFF'}, AC ${S.ac?S.temp+'°C':'OFF'}, Door ${S.door?'OPEN':'Closed'}, Water ${S.water}%`;
-  return 'Samjha nahi. Try: light on, fan off, ac on, temp 22, door status, water level';
+  const c=text.toLowerCase().replace(/[?!.,]/g,' ').replace(/\s+/g,' ').trim();
+  if(!c)return '';
+  const t=re=>re.test(c);
+  const asking=/\?\s*$/.test(text.trim())||t(/^(is|are|what|whats|how|show|tell|check|which|do|does)\b/)||t(/\bstatus\b/)||t(/\bhow (much|many)\b/);
+  const wOn=t(/\b(on|start|enable)\b/),wOff=t(/\b(off|stop|disable)\b/);
+  const set=wOn!==wOff?wOn:null;           // true = ON, false = OFF, null = not clear
+  const num=(c.match(/\b(\d{2})\b/)||[])[1];
+  if(t(/\b(help|commands?|what can you do)\b/))return HELP;
+  if(t(/\bauto( mode)?\b/)&&set!==null&&!asking){S.auto=set;render();return `⚙️ Auto mode ${onoff(set)}.\n`+waterText();}
+  if(t(/\b(water|tank|level|pump)\b/)){
+    if(t(/\bpump\b/)&&set!==null&&!asking){S.auto=false;S.pump=set;render();return `⚙️ Pump ${onoff(set)} (manual mode).\nWater level is ${S.water}%.`;}
+    return waterText();
+  }
+  if(t(/\b(everything|all)\b/)&&set!==null&&!t(/\b(lights?|lamps?|bulbs?|fan|ac)\b/)){
+    S.l1=S.l2=S.fan=S.ac=set;render();return `✅ Everything ${onoff(set)}`;
+  }
+  if(t(/\b(lights?|lamps?|bulbs?)\b/)){
+    const a=t(/\b(1|one)\b/),b=t(/\b(2|two)\b/);
+    const keys=(a===b||t(/\b(both|all)\b/))?['l1','l2']:(a?['l1']:['l2']);
+    const name=keys.length===2?'Lights':(keys[0]==='l1'?'Light 1':'Light 2');
+    if(asking||set===null)return keys.map(k=>`💡 ${k==='l1'?'Light 1':'Light 2'} is ${onoff(S[k])}`).join('\n');
+    keys.forEach(k=>S[k]=set);render();return `✅ ${name} ${onoff(set)}`;
+  }
+  if(t(/\bfan\b/)){
+    if(asking||set===null)return `🌀 Fan is ${onoff(S.fan)}`;
+    S.fan=set;render();return `✅ Fan ${onoff(set)}`;
+  }
+  if(num&&t(/\b(ac|temp|temperature|degrees?|set)\b/)&&set!==false){
+    const v=+num;if(v<16||v>30)return '⚠️ Please choose a temperature between 16 and 30.';
+    setTemp(v);render();return `❄️ AC is ON at ${S.temp}°C`;
+  }
+  if(t(/\b(ac|air conditioner|cooling)\b/)){
+    if(asking||set===null)return `❄️ AC is ${S.ac?'ON at '+S.temp+'°C':'OFF'}`;
+    S.ac=set;render();return `✅ AC ${onoff(set)}${set?' at '+S.temp+'°C':''}`;
+  }
+  if(t(/\b(door|gate|alarm)\b/)){
+    if(!asking&&t(/\b(open|unlock)\b/)){S.door=true;render();return '🚨 Door open! Alarm active.';}
+    if(!asking&&t(/\b(close|shut|lock)\b/)){S.door=false;render();return '🚪 Door closed. Alarm off.';}
+    return `🚪 Door is ${S.door?'OPEN 🚨':'closed'}`;
+  }
+  if(t(/\b(status|everything|all)\b/))return statusText();
+  return "Sorry, I didn't understand that.\n"+HELP;
 }
 const chat=$('chat');
 function say(t,cls){const d=document.createElement('div');d.className='m '+cls;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;}
-say('Hi! Main SmartHome Bot hoon. Command likho: light on, fan off, ac on, temp 22, door status, water level','bot');
-$('f').onsubmit=e=>{e.preventDefault();const v=$('q').value.trim();if(!v)return;$('q').value='';say(v,'me');say(command(v),'bot');};
+const LINK_DEFAULT=$('link').textContent;
+function speak(t){try{if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t.replace(/°C/g,' degrees').replace(/[^\x20-\x7E\n]/g,'').replace(/\n+/g,'. '));u.lang='en-IN';speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+function ask(v,viaVoice){say(v,'me');const r=command(v);say(r,'bot');if(viaVoice)speak(r.startsWith('Sorry')?r.split('\n')[0]:r);}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const mic=$('mic');
+if(!SR){mic.style.display='none';$('link').textContent='Voice is not supported in this browser. Use Chrome or Edge, or type your command.';}
+else{
+  let rec=null,live=false;
+  mic.onclick=()=>{
+    if(live&&rec){rec.stop();return;}
+    rec=new SR();rec.lang='en-IN';rec.interimResults=false;rec.maxAlternatives=1;
+    rec.onstart=()=>{live=true;mic.classList.add('rec');$('link').textContent='🎤 Listening... say a command like "light on" or "water level".';};
+    rec.onerror=e=>{$('link').textContent=(e.error==='not-allowed'||e.error==='service-not-allowed')?'Microphone is blocked. Allow mic access for this site and try again.':'Could not hear you. Tap 🎤 and try again.';};
+    rec.onend=()=>{live=false;mic.classList.remove('rec');};
+    rec.onresult=e=>{const v=(e.results[0][0].transcript||'').trim();$('link').textContent=LINK_DEFAULT;if(v)ask(v,true);};
+    try{rec.start();}catch(err){}
+  };
+}
+say("Hi! I'm the Smart Home bot. Type a command like \"light on\", \"fan on\" or \"water level\".",'bot');
+$('f').onsubmit=e=>{e.preventDefault();const v=$('q').value.trim();if(!v)return;$('q').value='';ask(v);};
 render();
 </script>
 </body>
