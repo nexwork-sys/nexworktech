@@ -22,7 +22,7 @@ svg{width:100%;height:100%;display:block;border-radius:10px}
 @media(prefers-color-scheme:light){.ctl button{color:#14263a}}
 .ctl button.on{background:#1f9d55;color:#fff}
 .ctl button:active{transform:scale(.96)}
-#toast{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;font-size:12px;padding:6px 12px;border-radius:999px;display:none;max-width:90%;text-align:center}
+#toast{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;font-size:12px;padding:6px 12px;border-radius:999px;display:none;max-width:90%;text-align:center;white-space:pre-line}
 #toast.show{display:block}
 </style>
 </head>
@@ -176,11 +176,12 @@ const onoff=v=>v?'ON':'OFF';
 function statusText(){return `💡 Light 1: ${onoff(S.l1)}\n💡 Light 2: ${onoff(S.l2)}\n🌀 Fan: ${onoff(S.fan)}\n❄️ AC: ${S.ac?'ON at '+S.temp+'°C':'OFF'}\n🚪 Door: ${S.door?'OPEN':'Closed'}\n💧 Water: ${S.water}% · Pump ${onoff(S.pump)}${S.auto?' (auto)':' (manual)'}`;}
 function waterText(){return `💧 Water level is ${S.water}%.\nPump is ${onoff(S.pump)}${S.auto?' (auto mode)':' (manual mode)'}.`;}
 function command(text){
-  const c=text.toLowerCase().replace(/[?!.,]/g,' ').replace(/\s+/g,' ').trim();
+  const c=text.toLowerCase().replace(/[?!.,]/g,' ').replace(/\s+/g,' ').trim()
+    .replace(/\ba c\b/g,'ac').replace(/\b(a see|ay see|ace|easy)\b/g,'ac').replace(/\bof$/,'off');
   if(!c)return '';
   const t=re=>re.test(c);
   const asking=/\?\s*$/.test(text.trim())||t(/^(is|are|what|whats|how|show|tell|check|which|do|does)\b/)||t(/\bstatus\b/)||t(/\bhow (much|many)\b/);
-  const wOn=t(/\b(on|start|enable)\b/),wOff=t(/\b(off|stop|disable)\b/);
+  const wOn=t(/\b(on|start|enable|chalu|chalao)\b/),wOff=t(/\b(off|stop|disable|band)\b/);
   const set=wOn!==wOff?wOn:null;           // true = ON, false = OFF, null = not clear
   const num=(c.match(/\b(\d{2})\b/)||[])[1];
   if(t(/\b(help|commands?|what can you do)\b/))return HELP;
@@ -224,23 +225,48 @@ function command(text){
 
 /* ---------- Voice: always-on, no mic button ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-const toastEl=$('toast');
-function toast(m){toastEl.textContent=m;toastEl.classList.add('show');}
+const toastEl=$('toast');let toastT=0;
+function toast(m,ms){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(toastT);if(ms)toastT=setTimeout(untoast,ms);}
 function untoast(){toastEl.classList.remove('show');}
-let rec=null,want=false;
+let rec=null,want=false,speaking=false;
+function speak(t){
+  try{
+    if(!window.speechSynthesis)return;
+    const u=new SpeechSynthesisUtterance(t.replace(/°C/g,' degrees').replace(/%/g,' percent').replace(/[^\x20-\x7E\n]/g,'').replace(/\n+/g,'. '));
+    u.lang='en-IN';
+    speaking=true;try{rec&&rec.abort();}catch(e){}   // mic pauses while bot talks, so it never hears itself
+    const done=()=>{if(!speaking)return;speaking=false;setTimeout(boot,400);};
+    u.onend=done;u.onerror=done;
+    speechSynthesis.cancel();speechSynthesis.speak(u);
+    setTimeout(done,9000);
+  }catch(e){speaking=false;}
+}
+function handle(alts){
+  for(const a of alts){
+    const r=command(a);
+    if(r&&!r.startsWith('Sorry')){
+      toast('\u201c'+a+'\u201d \u2192 '+r.replace(/\n/g,' \u00b7 '),4000);
+      if(r.length<160)speak(r);
+      return;
+    }
+  }
+  toast('Didn\u2019t catch: \u201c'+(alts[0]||'')+'\u201d. Try \u201cac off\u201d, \u201cfan off\u201d, \u201cwater level\u201d.',3500);
+}
 function boot(){
-  if(rec||!want)return;
-  rec=new SR();rec.lang='en-IN';rec.continuous=true;rec.interimResults=false;rec.maxAlternatives=1;
-  rec.onstart=untoast;
+  if(rec||!want||speaking)return;
+  rec=new SR();rec.lang='en-IN';rec.continuous=true;rec.interimResults=false;rec.maxAlternatives=5;
   rec.onresult=e=>{
     for(let i=e.resultIndex;i<e.results.length;i++){
-      if(e.results[i].isFinal){const v=(e.results[i][0].transcript||'').trim();if(v)command(v);}
+      if(!e.results[i].isFinal)continue;
+      const alts=[];
+      for(let j=0;j<e.results[i].length;j++){const v=(e.results[i][j].transcript||'').trim();if(v)alts.push(v);}
+      if(alts.length)handle(alts);
     }
   };
   rec.onerror=e=>{
     if(e.error==='not-allowed'||e.error==='service-not-allowed'){want=false;toast('Mic blocked. Allow microphone for this site, then tap anywhere.');}
   };
-  rec.onend=()=>{rec=null;if(want)setTimeout(boot,300);}; // keep listening, auto-restart
+  rec.onend=()=>{rec=null;if(want&&!speaking)setTimeout(boot,300);}; // keep listening, auto-restart
   try{rec.start();}catch(err){rec=null;if(want)setTimeout(boot,1000);}
 }
 function startVoice(){
@@ -248,8 +274,7 @@ function startVoice(){
   want=true;boot();
 }
 window.startVoice=startVoice;
-// fallback: if the browser needed a gesture, the first tap anywhere starts it
-addEventListener('pointerdown',()=>{if(SR&&!rec)startVoice();});
+addEventListener('pointerdown',()=>{if(SR&&!rec&&!speaking)startVoice();});
 startVoice();
 render();
 </script>
