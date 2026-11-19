@@ -1,7 +1,7 @@
 import { Review } from "@/lib/models";
 import { guard, json, fail, isId, readBody } from "@/lib/api";
 
-// Featured on/off (max 3)
+// Featured on/off — jitne chahe utne reviews website par dikha sakte hain
 export async function PATCH(req, { params }) {
   const { error } = await guard("admin");
   if (error) return error;
@@ -11,12 +11,6 @@ export async function PATCH(req, { params }) {
   const review = await Review.findById(id);
   if (!review) return fail("Review nahi mila", 404);
 
-  if (featured && !review.featured) {
-    const count = await Review.countDocuments({ featured: true });
-    if (count >= 3) {
-      return fail("Maximum 3 reviews can be featured at once! Pehle kisi ek featured review ko unselect karein.", 409);
-    }
-  }
   review.featured = !!featured;
   await review.save();
   return json({ review });

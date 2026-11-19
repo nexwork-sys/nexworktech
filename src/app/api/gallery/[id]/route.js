@@ -1,4 +1,5 @@
 import { GalleryItem } from "@/lib/models";
+import { SERVICE_KINDS } from "@/lib/defaults";
 import { guard, json, fail, isId, readBody } from "@/lib/api";
 
 export async function PUT(req, { params }) {
@@ -10,7 +11,7 @@ export async function PUT(req, { params }) {
   if (!b.title || !b.image) return fail("Title aur image zaroori hai");
   const item = await GalleryItem.findByIdAndUpdate(
     id,
-    { title: b.title, category: b.category, description: b.description || "", image: b.image },
+    { title: b.title, category: SERVICE_KINDS.includes(b.category) ? b.category : "AI Automation", description: b.description || "", image: b.image },
     { new: true }
   );
   if (!item) return fail("Item nahi mila", 404);

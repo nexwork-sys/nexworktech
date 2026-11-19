@@ -19,6 +19,18 @@ export async function PATCH(req, { params }) {
 
   const prevStatus = task.status;
   if (b.status && STATUS_LABEL[b.status]) task.status = b.status;
+
+  // Employee kaam submit karta hai (note + link) -> status automatically "In Review"
+  if (b.submission && typeof b.submission === "object") {
+    const note = String(b.submission.note || "").trim().slice(0, 3000);
+    const link = String(b.submission.link || "").trim().slice(0, 500);
+    if (!note && !link) return fail("Kaam ka note ya link daalna zaroori hai");
+    task.submission = { note, link, submittedAt: new Date() };
+    task.feedback = "";
+    task.status = "review";
+  }
+  // Admin feedback: "changes chahiye" -> wapas In Progress, ya approve -> Done
+  if (isAdmin && typeof b.feedback === "string") task.feedback = b.feedback.trim().slice(0, 2000);
   if (isAdmin) {
     if (typeof b.title === "string" && b.title.trim()) task.title = b.title.trim();
     if (typeof b.description === "string") task.description = b.description;

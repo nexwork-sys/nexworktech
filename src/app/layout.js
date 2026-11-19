@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "NEXWORKTECH | AI Automation, IoT & PCB Design",
-  description: "AI Automation, IoT Development and PCB Designing by NEXWORKTECH",
+  title: "NEXWORKTECH | AI Automation & AIoT Development",
+  description: "AI Automation and AIoT Development by NEXWORKTECH",
 };
 
 export default function RootLayout({ children }) {

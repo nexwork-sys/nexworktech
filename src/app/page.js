@@ -33,71 +33,30 @@ import {
   Terminal,
   KeyRound,
   Users,
+  Briefcase,
 } from "lucide-react";
-import { DEFAULT_GALLERY, DEFAULT_OWNER, DEFAULT_REVIEWS } from "@/lib/defaults";
+import { DEFAULT_GALLERY, DEFAULT_OWNER, DEFAULT_REVIEWS, DEFAULT_SERVICES, DEFAULT_PROJECTS } from "@/lib/defaults";
+import { SocialLinks } from "@/components/site/icons";
+import RemoteWorkModal from "@/components/site/RemoteWork";
+import ServicesAdmin from "@/components/admin/ServicesAdmin";
+import ProjectsAdmin from "@/components/admin/ProjectsAdmin";
+import RemoteAdmin from "@/components/admin/RemoteAdmin";
 
-// --- HERO BACKGROUND SLIDES (PCB / IoT / Automation / AI) ---
+// --- HERO BACKGROUND SLIDES (IoT / Automation / AI) ---
 // Files public/hero/ me hain. Real photo lagani ho to usi naam se replace kar do.
 const HERO_BG_SLIDES = [
-  { id: "pcb-bg", label: "PCB Designing", image: "/hero/pcb-layout.svg" },
-  { id: "iot-bg", label: "IoT Development", image: "/hero/iot-network.svg" },
+  { id: "iot-bg", label: "AIoT Development", image: "/hero/iot-network.svg" },
   { id: "auto-bg", label: "Automation Flows", image: "/hero/automation-flow.svg" },
   { id: "ai-bg", label: "AI Automation", image: "/hero/ai-neural.svg" },
   { id: "home-bg", label: "Smart Home", image: "/hero/smart-home.svg" },
 ];
 
-// --- SOCIAL LINKS (apne real links yaha daalo) ---
-const INSTAGRAM_URL = "https://www.instagram.com/";
-const YOUTUBE_URL = "https://www.youtube.com/";
+// Service kind -> icon + rang (admin kind chunta hai: "ai" ya "aiot")
+const KIND_STYLE = {
+  ai: { Icon: Bot, text: "text-cyan-400", gradient: "from-cyan-500/20 via-blue-500/5 to-transparent" },
+  aiot: { Icon: Cpu, text: "text-emerald-400", gradient: "from-emerald-500/20 via-teal-500/5 to-transparent" },
+};
 
-// --- REAL PROJECTS (Nexwork Tech ne banaye) ---
-const REAL_PROJECTS = [
-  {
-    name: "XOScrap",
-    tag: "Web App • Scrap Pickup Platform",
-    url: "https://www.xoscrap.com",
-    desc: "Ghar baithe scrap bechne ka platform — live rates, doorstep pickup request form aur admin panel. Varanasi me live.",
-    images: [
-      "https://www.xoscrap.com/images/a.jpeg",
-      "https://www.xoscrap.com/images/b.jpeg",
-      "https://www.xoscrap.com/images/c.jpeg",
-    ],
-    stats: ["26+ Live Rate Items", "Admin Panel", "Pickup Requests"],
-  },
-  {
-    name: "The Little Moon Academy",
-    tag: "School Website + ERP",
-    url: "https://www.thelittlemoonacademy.com",
-    desc: "Nursery se Class VIII school ki website — toppers, events, admission inquiry aur student/teacher ERP login.",
-    images: [
-      "https://thelittlemoonacademy.com/_next/image?url=%2Flogo.png&w=256&q=75",
-      "https://thelittlemoonacademy.com/activities/science-1.svg",
-      "https://thelittlemoonacademy.com/activities/sports-1.svg",
-    ],
-    stats: ["Student ERP", "Toppers & Events", "Admission Inquiry"],
-  },
-];
-
-function InstagramIcon({ className = "w-5 h-5" }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function YoutubeIcon({ className = "w-5 h-5" }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M22 8.2a3 3 0 0 0-2.1-2.1C18.1 5.6 12 5.6 12 5.6s-6.1 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12 31 31 0 0 0 2 15.8a3 3 0 0 0 2.1 2.1c1.8.5 7.9.5 7.9.5s6.1 0 7.9-.5a3 3 0 0 0 2.1-2.1c.3-1.3.4-2.5.4-3.8s-.1-2.5-.4-3.8Z" />
-      <path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-const BOT_LIVE_URL = "https://nexworktech-iot.onrender.com/connect.html";
 
 // --- CUSTOM PCB-TEXTURED LETTER 'X' COMPONENT ---
 function PcbTexturedX({ uid = "hero", compact = false }) {
@@ -468,6 +427,10 @@ function NexworkBrandWordmark({ compact = false, animateLetters = true }) {
 
 export default function NexworkTechWebsite() {
   const [gallery, setGallery] = useState(DEFAULT_GALLERY);
+  const [services, setServices] = useState(DEFAULT_SERVICES.map((x, i) => ({ ...x, id: `d${i}` })));
+  const [projects, setProjects] = useState(DEFAULT_PROJECTS.map((x, i) => ({ ...x, id: `p${i}` })));
+  const [showcaseFilter, setShowcaseFilter] = useState("All");
+  const [isRemoteOpen, setIsRemoteOpen] = useState(false);
   const [owner, setOwner] = useState(DEFAULT_OWNER);
   const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
   const [enquiries, setEnquiries] = useState([]);
@@ -515,14 +478,6 @@ export default function NexworkTechWebsite() {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [adminReviewNotice, setAdminReviewNotice] = useState("");
 
-  const [newPic, setNewPic] = useState({
-    title: "",
-    category: "AI Automation",
-    description: "",
-    image: "",
-  });
-  const [editingId, setEditingId] = useState(null);
-
   // Auto-change Hero Background across 4 work-related photos every 4 seconds
   useEffect(() => {
     const timer = setInterval(() => {
@@ -547,7 +502,9 @@ export default function NexworkTechWebsite() {
       const { ok, data } = await call("/api/site");
       if (!ok) return;
       setGallery(data.gallery);
-      setOwner(data.owner?.name === "Ayaan Ahmad" ? DEFAULT_OWNER : data.owner);
+      if (data.services) setServices(data.services);
+      if (data.projects) setProjects(data.projects);
+      setOwner(data.owner?.name === "Ayaan Ahmad" ? DEFAULT_OWNER : { ...DEFAULT_OWNER, ...data.owner });
       setReviews(data.reviews);
     } catch {}
   };
@@ -637,7 +594,7 @@ export default function NexworkTechWebsite() {
     }, 4000);
   };
 
-  // Admin toggles featured status (Max 3 reviews featured on website)
+  // Admin toggles featured status (jo select hoga wahi website par dikhega)
   const handleToggleFeatureReview = async (id) => {
     const target = reviews.find((r) => r.id === id);
     if (!target) return;
@@ -726,9 +683,7 @@ export default function NexworkTechWebsite() {
       const res = await fetch("/api/upload", { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload fail");
-      if (target === "gallery") {
-        setNewPic((prev) => ({ ...prev, image: data.url }));
-      } else if (target === "owner") {
+      if (target === "owner") {
         const updated = { ...owner, photo: data.url };
         setOwner(updated);
         await persistOwner(updated);
@@ -740,88 +695,20 @@ export default function NexworkTechWebsite() {
     e.target.value = "";
   };
 
-  const handleSaveGalleryItem = async (e) => {
-    e.preventDefault();
-    if (!newPic.title || !newPic.image) return;
-
-    if (editingId) {
-      const { ok, data } = await call(`/api/gallery/${editingId}`, "PUT", newPic);
-      if (!ok) return alert(data.error || "Update nahi hua");
-      setGallery(gallery.map((item) => (item.id === editingId ? data.item : item)));
-      setEditingId(null);
-    } else {
-      const { ok, data } = await call("/api/gallery", "POST", newPic);
-      if (!ok) return alert(data.error || "Upload nahi hua");
-      setGallery([data.item, ...gallery]);
-    }
-    setNewPic({ title: "", category: "AI Automation", description: "", image: "" });
-  };
-
-  const handleEditClick = (item) => {
-    setEditingId(item.id);
-    setNewPic({
-      title: item.title,
-      category: item.category,
-      description: item.description,
-      image: item.image,
-    });
-  };
-
-  const handleDeleteGalleryItem = async (id) => {
-    const { ok } = await call(`/api/gallery/${id}`, "DELETE");
-    if (ok) setGallery(gallery.filter((item) => item.id !== id));
-  };
-
   const handleDeleteEnquiry = async (id) => {
     const { ok } = await call(`/api/enquiries/${id}`, "DELETE");
     if (ok) setEnquiries(enquiries.filter((item) => item.id !== id));
   };
 
-  const services = [
-    {
-      icon: <Bot className="w-8 h-8 text-cyan-400" />,
-      tag: "01 / INTELLIGENCE",
-      title: "AI Automation",
-      desc: "Custom AI agents, intelligent workflow automation, WhatsApp/Instagram chatbots, CRM pipelines, aur business processes ko 10x fast banane ke liye smart AI solutions.",
-      features: [
-        "Custom LLM Agents & Chatbots",
-        "Workflow & Process Automation",
-        "Predictive Data Analytics",
-      ],
-      gradient: "from-cyan-500/20 via-blue-500/5 to-transparent",
-    },
-    {
-      icon: <Cpu className="w-8 h-8 text-emerald-400" />,
-      tag: "02 / CONNECTIVITY",
-      title: "IoT Development",
-      desc: "Smart sensors, microcontrollers (ESP32, Arduino, Raspberry Pi), cloud dashboards, aur real-time hardware-to-cloud communication systems ki end-to-end engineering.",
-      features: [
-        "Smart Home & Industrial IoT",
-        "Real-Time Cloud Dashboards",
-        "Embedded Firmware Coding",
-      ],
-      gradient: "from-emerald-500/20 via-teal-500/5 to-transparent",
-    },
-    {
-      icon: <Layers className="w-8 h-8 text-purple-400" />,
-      tag: "03 / HARDWARE",
-      title: "PCB Designing",
-      desc: "Schematic capture se lekar multi-layer PCB layout, signal integrity, BOM optimization, aur manufacturing-ready Gerber files tak complete hardware design.",
-      features: [
-        "Multi-Layer PCB Layout",
-        "Schematic & Component Selection",
-        "Gerber & Prototype Testing",
-      ],
-      gradient: "from-purple-500/20 via-indigo-500/5 to-transparent",
-    },
-  ];
+  const showcaseTabs = ["All", ...new Set(gallery.map((g) => g.category))];
+  const showcaseItems = showcaseFilter === "All" ? gallery : gallery.filter((g) => g.category === showcaseFilter);
 
-  // Top 3 Admin-Selected Reviews to display prominently above Footer
-  const featuredReviews = reviews.filter((r) => r.featured).slice(0, 3);
+  // Sirf wahi reviews jo admin ne select kiye (koi limit nahi)
+  const featuredReviews = reviews.filter((r) => r.featured);
 
   return (
     <div className="min-h-screen bg-[#050811] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black overflow-x-hidden">
-      {/* NAVBAR WITH COMPACT PCB-X & MINI BOT LOGO */}
+      {/* NAVBAR WITH COMPACT X & MINI BOT LOGO */}
       <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-[#050811]/75 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 group">
@@ -831,7 +718,7 @@ export default function NexworkTechWebsite() {
             <div>
               <NexworkBrandWordmark compact={true} animateLetters={true} />
               <span className="block text-[8px] sm:text-[9px] tracking-[0.2em] sm:tracking-[0.25em] text-cyan-400 uppercase mt-0.5 whitespace-nowrap">
-                AI • IoT • PCB Lab
+                AI • AIoT Lab
               </span>
             </div>
           </a>
@@ -850,9 +737,9 @@ export default function NexworkTechWebsite() {
             <a href="#projects" className="hover:text-cyan-400 transition-colors">
               Projects
             </a>
-            <a href="#showcase" className="hover:text-cyan-400 transition-colors">
-              Showcase
-            </a>
+            <button onClick={() => setIsRemoteOpen(true)} className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+              <Briefcase className="w-3.5 h-3.5" /> Remote Work
+            </button>
             <a href="#reviews" className="hover:text-cyan-400 transition-colors">
               Reviews
             </a>
@@ -921,7 +808,7 @@ export default function NexworkTechWebsite() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#050811]/70 backdrop-blur-md border border-cyan-400/30 text-cyan-300 text-xs font-semibold tracking-wide mb-9 shadow-lg"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            NEXT-GENERATION SOFTWARE & HARDWARE ENGINEERING
+            NEXT-GENERATION AI & AIoT ENGINEERING
           </motion.div>
 
           <div className="flex items-center justify-center mb-7 pt-2">
@@ -937,9 +824,8 @@ export default function NexworkTechWebsite() {
             className="text-base sm:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
           >
             Building the future with intelligent{" "}
-            <span className="text-cyan-400 font-semibold">AI Automation</span>, connected{" "}
-            <span className="text-emerald-400 font-semibold">IoT Ecosystems</span>, and precision{" "}
-            <span className="text-purple-400 font-semibold">Multi-Layer PCB Designing</span>.
+            <span className="text-cyan-400 font-semibold">AI Automation</span> and connected{" "}
+            <span className="text-emerald-400 font-semibold">AIoT Ecosystems</span> that think, connect and act.
           </motion.p>
 
           <motion.div
@@ -984,14 +870,14 @@ export default function NexworkTechWebsite() {
         </div>
       </section>
 
-      {/* CLEAN PILLARS BAR (AI, IoT, PCB) */}
+      {/* CLEAN PILLARS BAR (AI, AIoT) */}
       <section className="px-6 max-w-7xl mx-auto relative z-10 -mt-4">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-md"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-md"
         >
           <div className="text-center p-4">
             <p className="text-3xl sm:text-4xl font-black text-cyan-400">AI</p>
@@ -999,22 +885,16 @@ export default function NexworkTechWebsite() {
               Smart Autonomous Workflows
             </p>
           </div>
-          <div className="text-center p-4 border-y sm:border-y-0 sm:border-x border-white/10">
-            <p className="text-3xl sm:text-4xl font-black text-emerald-400">IoT</p>
+          <div className="text-center p-4 border-t sm:border-t-0 sm:border-l border-white/10">
+            <p className="text-3xl sm:text-4xl font-black text-emerald-400">AIoT</p>
             <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest">
-              Connected Hardware & Cloud
-            </p>
-          </div>
-          <div className="text-center p-4">
-            <p className="text-3xl sm:text-4xl font-black text-purple-400">PCB</p>
-            <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest">
-              Industrial Circuit Design
+              Connected Hardware, Cloud & AI
             </p>
           </div>
         </motion.div>
       </section>
 
-      {/* CORE SERVICES SECTION */}
+      {/* CORE SERVICES SECTION (admin se edit hota hai) + SHOWCASE neeche */}
       <section id="services" className="py-24 px-6 max-w-7xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 25 }}
@@ -1027,56 +907,117 @@ export default function NexworkTechWebsite() {
             WHAT WE ENGINEER
           </p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">
-            Core Technological Pillars
+            Our Services
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((srv, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 35 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.15 }}
-              whileHover={{ y: -8 }}
-              className={`p-8 rounded-3xl bg-gradient-to-b ${srv.gradient} bg-[#0b1021]/90 border border-white/10 hover:border-cyan-400/40 transition-all flex flex-col justify-between`}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                    {srv.icon}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {services.map((srv, idx) => {
+            const st = KIND_STYLE[srv.kind] || KIND_STYLE.ai;
+            const SIcon = st.Icon;
+            return (
+              <motion.div
+                key={srv.id}
+                initial={{ opacity: 0, y: 35 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.15 }}
+                whileHover={{ y: -8 }}
+                className={`p-8 rounded-3xl bg-gradient-to-b ${st.gradient} bg-[#0b1021]/90 border border-white/10 hover:border-cyan-400/40 transition-all flex flex-col justify-between`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
+                      <SIcon className={`w-8 h-8 ${st.text}`} />
+                    </div>
+                    <span className="text-[11px] font-mono text-slate-400 tracking-widest">
+                      {srv.tag}
+                    </span>
                   </div>
-                  <span className="text-[11px] font-mono text-slate-400 tracking-widest">
-                    {srv.tag}
-                  </span>
+
+                  <h3 className="text-2xl font-bold mb-3 text-white">{srv.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-6">{srv.description}</p>
+
+                  <ul className="space-y-2.5 mb-8">
+                    {(srv.features || []).map((feat, i) => (
+                      <li key={i} className="flex items-center gap-2.5 text-xs text-slate-300">
+                        <CheckCircle className="w-4 h-4 text-cyan-400 shrink-0" />
+                        {feat}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-3 text-white">{srv.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed mb-6">{srv.desc}</p>
-
-                <ul className="space-y-2.5 mb-8">
-                  {srv.features.map((feat, i) => (
-                    <li key={i} className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <CheckCircle className="w-4 h-4 text-cyan-400 shrink-0" />
-                      {feat}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <button
-                onClick={() => {
-                  setEnquiryForm((prev) => ({ ...prev, service: srv.title }));
-                  setIsEnquiryOpen(true);
-                }}
-                className="w-full py-3 rounded-xl bg-white/5 hover:bg-cyan-400 hover:text-slate-950 border border-white/10 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
-              >
-                Enquire for {srv.title} <ChevronRight className="w-4 h-4" />
-              </button>
-            </motion.div>
-          ))}
+                <button
+                  onClick={() => {
+                    setEnquiryForm((prev) => ({ ...prev, service: srv.title }));
+                    setIsEnquiryOpen(true);
+                  }}
+                  className="w-full py-3 rounded-xl bg-white/5 hover:bg-cyan-400 hover:text-slate-950 border border-white/10 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                >
+                  Enquire for {srv.title} <ChevronRight className="w-4 h-4" />
+                </button>
+              </motion.div>
+            );
+          })}
         </div>
+
+        {/* SHOWCASE — services ke andar hi */}
+        {gallery.length > 0 && (
+          <div id="showcase" className="mt-24">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-2">
+                  SERVICE SHOWCASE
+                </p>
+                <h3 className="text-2xl sm:text-4xl font-bold tracking-tight">Featured Builds</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {showcaseTabs.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setShowcaseFilter(t)}
+                    className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all ${
+                      showcaseFilter === t
+                        ? "bg-cyan-400 text-slate-950 border-cyan-400"
+                        : "bg-white/5 text-slate-300 border-white/10 hover:text-white"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {showcaseItems.map((item, idx) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.1 }}
+                  className="group rounded-3xl overflow-hidden bg-[#0b1021] border border-white/10 hover:border-cyan-400/40 transition-all flex flex-col"
+                >
+                  <div className="relative h-56 overflow-hidden bg-slate-900">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-white/15 text-[11px] font-semibold text-cyan-400">
+                      {item.category}
+                    </span>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">{item.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ================= DEDICATED LIVE IOT HOME CONTROL BOT SECTION ================= */}
@@ -1108,7 +1049,7 @@ export default function NexworkTechWebsite() {
               </h2>
 
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                Yeh hamara live engineered IoT automation bot hai jo poore ghar (Home) ki sabhi devices aur appliances ko real-time mein control karta hai. Aap neeche diye gaye button par click karke ise khud khol kar live test kar sakte hain!
+                Yeh hamara live engineered IoT automation bot hai jo poore ghar (Home) ki sabhi devices aur appliances ko real-time mein control karta hai. Neeche diye gaye button par click karke ise yahin live test kar sakte hain!
               </p>
 
               {/* Smart Home Features Controlled by the Bot */}
@@ -1137,15 +1078,6 @@ export default function NexworkTechWebsite() {
 
               {/* Action Buttons: Open Live Bot + Toggle Inline Preview */}
               <div className="flex flex-wrap items-center gap-4 pt-2">
-                <a
-                  href={BOT_LIVE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-7 py-4 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 font-black text-sm flex items-center gap-2.5 shadow-xl shadow-emerald-500/25 hover:scale-105 transition-transform"
-                >
-                  <span>Open & Test Live Bot</span>
-                  <ExternalLink className="w-4 h-4" />
-                </a>
 
                 <button
                   onClick={() => setShowBotIframe((prev) => !prev)}
@@ -1166,7 +1098,7 @@ export default function NexworkTechWebsite() {
                     <span className="w-3 h-3 rounded-full bg-amber-400" />
                     <span className="w-3 h-3 rounded-full bg-emerald-400" />
                     <span className="text-xs font-mono text-slate-400 ml-2">
-                      nexworktech-iot.onrender.com
+                      /demo/smart-home.html
                     </span>
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-bold">
@@ -1182,18 +1114,9 @@ export default function NexworkTechWebsite() {
                     <span className="text-cyan-400 font-bold">&gt; DEVICES:</span> Living Room Lights, Ceiling Fan, Main Gate, Smart Plugs Connected
                   </div>
                   <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-400/20 text-emerald-200">
-                    <span className="font-bold">&gt; PUBLIC TEST MODE:</span> Click &ldquo;Open &amp; Test Live Bot&rdquo; to interact with the live control panel.
+                    <span className="font-bold">&gt; PUBLIC TEST MODE:</span> Click &ldquo;Test Right Here&rdquo; to interact with the live control panel.
                   </div>
                 </div>
-
-                <a
-                  href={BOT_LIVE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-400 hover:text-slate-950 border border-emerald-400/30 text-center text-xs font-bold text-emerald-300 transition-all"
-                >
-                  https://nexworktech-iot.onrender.com/connect.html ↗
-                </a>
               </div>
             </div>
           </div>
@@ -1211,18 +1134,10 @@ export default function NexworkTechWebsite() {
                   <span className="text-xs font-semibold text-emerald-400">
                     ● Live Embedded Preview — NEXWORKTECH IoT Home Bot
                   </span>
-                  <a
-                    href={BOT_LIVE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-cyan-400 hover:underline flex items-center gap-1"
-                  >
-                    Open Full Screen <ExternalLink className="w-3 h-3" />
-                  </a>
                 </div>
                 <div className="rounded-2xl overflow-hidden border border-white/15 bg-black h-[520px]">
                   <iframe
-                    src={BOT_LIVE_URL}
+                    src="/demo/smart-home.html"
                     title="NEXWORKTECH Smart Home IoT Bot"
                     className="w-full h-full border-0"
                   />
@@ -1233,61 +1148,72 @@ export default function NexworkTechWebsite() {
         </motion.div>
       </section>
 
-      {/* REAL PROJECTS */}
+      {/* PROJECTS (admin image + link + description lagata hai) */}
       <section id="projects" className="py-24 px-6 max-w-7xl mx-auto relative z-10">
         <div className="mb-14">
           <p className="text-xs uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-2">
             LIVE & DELIVERED
           </p>
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Our Real Projects</h2>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Our Projects</h2>
           <p className="text-sm text-slate-400 mt-3 max-w-xl">
-            Ye websites Nexwork Tech ne client ke liye banayi hain aur abhi live chal rahi hain.
+            Nexwork Tech ke banaye hue projects — details aur live links neeche.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {REAL_PROJECTS.map((pr) => (
-            <div
-              key={pr.name}
-              className="rounded-3xl overflow-hidden bg-[#0b1021] border border-white/10 hover:border-cyan-400/40 transition-colors flex flex-col"
-            >
-              <div className="grid grid-cols-3 gap-1 h-52 bg-slate-900">
-                {pr.images.map((src, i) => (
-                  <img
-                    key={i}
-                    src={src}
-                    alt={`${pr.name} ${i + 1}`}
-                    loading="lazy"
-                    onError={(e) => (e.currentTarget.style.visibility = "hidden")}
-                    className={`w-full h-full ${
-                      i === 0 && pr.name !== "XOScrap" ? "object-contain p-4" : "object-cover"
-                    }`}
-                  />
-                ))}
-              </div>
-              <div className="p-6 flex-1 flex flex-col">
-                <p className="text-xs font-semibold text-cyan-400">{pr.tag}</p>
-                <h3 className="text-2xl font-bold text-white mt-1">{pr.name}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed mt-2">{pr.desc}</p>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {pr.stats.map((t) => (
-                    <span key={t} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-slate-300">
-                      {t}
-                    </span>
-                  ))}
+        {projects.length === 0 ? (
+          <p className="text-sm text-slate-500">Projects jaldi add honge.</p>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {projects.map((pr) => (
+              <div
+                key={pr.id}
+                className="rounded-3xl overflow-hidden bg-[#0b1021] border border-white/10 hover:border-cyan-400/40 transition-colors flex flex-col"
+              >
+                {pr.images?.length > 0 && (
+                  <div
+                    className="grid gap-1 h-52 bg-slate-900"
+                    style={{ gridTemplateColumns: `repeat(${Math.min(pr.images.length, 3)}, minmax(0, 1fr))` }}
+                  >
+                    {pr.images.slice(0, 3).map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt={`${pr.name} ${i + 1}`}
+                        loading="lazy"
+                        onError={(e) => (e.currentTarget.style.visibility = "hidden")}
+                        className={`w-full h-full ${/logo/i.test(src) ? "object-contain p-4" : "object-cover"}`}
+                      />
+                    ))}
+                  </div>
+                )}
+                <div className="p-6 flex-1 flex flex-col">
+                  {pr.tag && <p className="text-xs font-semibold text-cyan-400">{pr.tag}</p>}
+                  <h3 className="text-2xl font-bold text-white mt-1">{pr.name}</h3>
+                  {pr.description && <p className="text-sm text-slate-400 leading-relaxed mt-2">{pr.description}</p>}
+                  {pr.stats?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {pr.stats.map((t) => (
+                        <span key={t} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-slate-300">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {pr.url && (
+                    <a
+                      href={pr.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-6 inline-flex items-center gap-2 self-start px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-xs"
+                    >
+                      Visit Project <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
                 </div>
-                <a
-                  href={pr.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 self-start px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-xs"
-                >
-                  Visit Live Site <ExternalLink className="w-3.5 h-3.5" />
-                </a>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* FOUNDER */}
@@ -1302,66 +1228,38 @@ export default function NexworkTechWebsite() {
             <p className="text-sm text-slate-300 mt-1">{owner.experience}</p>
             <p className="text-sm text-slate-400 leading-relaxed mt-4">{owner.bio}</p>
             <div className="flex flex-wrap gap-2 mt-5">
-              {["IoT", "PCB Design", "AI Automation"].map((t) => (
+              {["AI Automation", "AIoT"].map((t) => (
                 <span key={t} className="px-3.5 py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/30 text-xs font-semibold text-cyan-300">
                   {t}
                 </span>
               ))}
             </div>
+            <SocialLinks owner={owner} className="mt-5" />
           </div>
         </div>
       </section>
 
-      {/* PORTFOLIO / GALLERY SECTION */}
-      <section id="showcase" className="py-24 px-6 max-w-7xl mx-auto relative z-10">
+      {/* REMOTE WORK — "kaam dena hai ya kaam chahiye?" */}
+      <section id="remote" className="py-20 px-6 max-w-5xl mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between mb-14 gap-4"
+          className="rounded-[2.5rem] border border-cyan-400/25 bg-gradient-to-br from-[#08162a] via-[#0a1224] to-[#07181c] p-8 sm:p-12 text-center"
         >
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-2">
-              LIVE LAB GALLERY
-            </p>
-            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">
-              Featured Projects & Builds
-            </h2>
-          </div>
-          <p className="text-xs text-slate-400 max-w-xs">
-            All photos & project details below can be dynamically updated or uploaded from the Admin Panel.
+          <Briefcase className="w-10 h-10 text-cyan-400 mx-auto mb-4" />
+          <h2 className="text-3xl sm:text-4xl font-black text-white">Remote Work</h2>
+          <p className="text-sm text-slate-300 max-w-xl mx-auto mt-3 leading-relaxed">
+            Aap humein kaam dena chahte hain, ya aapko kaam chahiye? Apna kaam bhejein, ya hamare diye hue kaam
+            (rate aur description ke saath) dekhkar interest dikhayein.
           </p>
+          <button
+            onClick={() => setIsRemoteOpen(true)}
+            className="mt-7 px-8 py-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-sm inline-flex items-center gap-2 hover:scale-105 transition-transform"
+          >
+            Remote Work Shuru Karein <ArrowRight className="w-4 h-4" />
+          </button>
         </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {gallery.map((item, idx) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.1 }}
-              className="group rounded-3xl overflow-hidden bg-[#0b1021] border border-white/10 hover:border-cyan-400/40 transition-all flex flex-col"
-            >
-              <div className="relative h-56 overflow-hidden bg-slate-900">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-white/15 text-[11px] font-semibold text-cyan-400">
-                  {item.category}
-                </span>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">{item.description}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </section>
 
       {/* ================= CLIENT REVIEWS & SUBMIT REVIEW SECTION (RIGHT ABOVE FOOTER) ================= */}
@@ -1382,11 +1280,11 @@ export default function NexworkTechWebsite() {
             </span>
           </h2>
           <p className="text-sm text-slate-400 mt-3">
-            Hamare clients aur bot testers ke top selected reviews — aur neeche aap bhi apna review submit kar sakte hain.
+            Hamare clients aur bot testers ke chune hue reviews — aur neeche aap bhi apna review submit kar sakte hain.
           </p>
         </motion.div>
 
-        {/* TOP 3 ADMIN-SELECTED FEATURED REVIEWS (LARGE & PROMINENT CARDS) */}
+        {/* ADMIN-SELECTED REVIEWS (sirf wahi jo admin ne chune) */}
         {featuredReviews.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
             {featuredReviews.map((rev, idx) => (
@@ -1454,7 +1352,7 @@ export default function NexworkTechWebsite() {
               Write a Review
             </h3>
             <p className="text-xs text-slate-400 mt-1">
-              Apna naam aur email ID daal kar review submit karein. Admin approval ke baad top 3 reviews yahan feature kiye jayenge.
+              Apna naam aur email ID daal kar review submit karein. Admin approve karega toh aapka review yahan dikhega.
             </p>
           </div>
 
@@ -1517,9 +1415,9 @@ export default function NexworkTechWebsite() {
                     className="w-full px-4 py-3 rounded-xl bg-[#11182f] border border-white/10 text-sm text-white focus:border-cyan-400 outline-none"
                   >
                     <option value="IoT Home Control Bot">IoT Home Control Bot</option>
-                    <option value="AI Automation">AI Automation</option>
-                    <option value="IoT Development">IoT Development</option>
-                    <option value="PCB Designing">PCB Designing</option>
+                    {services.map((sv) => (
+                      <option key={sv.id} value={sv.title}>{sv.title}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -1590,28 +1488,9 @@ export default function NexworkTechWebsite() {
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-              Your engineering partner for custom AI Automation, IoT hardware ecosystems, and professional multi-layer PCB design.
+              Your engineering partner for custom AI Automation and AIoT — intelligent software connected to real hardware.
             </p>
-            <div className="flex items-center gap-3 mt-5">
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Nexwork Tech on Instagram"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-pink-500/80 hover:border-pink-400 transition-colors"
-              >
-                <InstagramIcon />
-              </a>
-              <a
-                href={YOUTUBE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Nexwork Tech on YouTube"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-red-600/80 hover:border-red-500 transition-colors"
-              >
-                <YoutubeIcon />
-              </a>
-            </div>
+            <SocialLinks owner={owner} className="mt-5" />
           </div>
 
           <div>
@@ -1619,9 +1498,12 @@ export default function NexworkTechWebsite() {
               Our Divisions
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li>• AI Agents & Workflow Automation</li>
-              <li>• Internet of Things (IoT) & Smart Home Bot</li>
-              <li>• Industrial PCB Layout & Prototyping</li>
+              {services.map((sv) => (
+                <li key={sv.id}>• {sv.title}</li>
+              ))}
+              <li>
+                <button onClick={() => setIsRemoteOpen(true)} className="hover:text-cyan-400">• Remote Work</button>
+              </li>
             </ul>
           </div>
 
@@ -1728,6 +1610,7 @@ export default function NexworkTechWebsite() {
                       <span>{owner.location}</span>
                     </div>
                   </div>
+                  <SocialLinks owner={owner} size="w-9 h-9" className="pt-4 border-t border-white/10" />
                 </div>
               </div>
 
@@ -1823,10 +1706,10 @@ export default function NexworkTechWebsite() {
                       }
                       className="w-full px-4 py-3 rounded-xl bg-[#11182f] border border-white/10 text-sm text-white focus:border-cyan-400 outline-none"
                     >
-                      <option value="AI Automation">1. AI Automation</option>
-                      <option value="IoT Development">2. IoT Development</option>
-                      <option value="PCB Designing">3. PCB Designing</option>
-                      <option value="Complete Hardware + AI">Complete Project (AI + IoT + PCB)</option>
+                      {services.map((sv) => (
+                        <option key={sv.id} value={sv.title}>{sv.title}</option>
+                      ))}
+                      <option value="Complete Project (AI + AIoT)">Complete Project (AI + AIoT)</option>
                     </select>
                   </div>
 
@@ -1888,7 +1771,7 @@ export default function NexworkTechWebsite() {
                   </div>
                   <h3 className="text-2xl font-bold text-white">NEXWORKTECH Admin</h3>
                   <p className="text-xs text-slate-400 mt-1 mb-6">
-                    Enter admin password to manage enquiries, gallery photos, reviews, owner info & team work.
+                    Enter admin password to manage services, projects, reviews, owner info, remote work & team.
                   </p>
 
                   {!showForgot ? (
@@ -1993,58 +1876,29 @@ export default function NexworkTechWebsite() {
                     </div>
                   )}
 
-                  {/* Admin Navigation Tabs (4 Tabs Including Reviews) */}
+                  {/* Admin Navigation Tabs */}
                   <div className="flex flex-wrap gap-2 my-6">
-                    <button
-                      onClick={() => setActiveAdminTab("enquiries")}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        activeAdminTab === "enquiries"
-                          ? "bg-cyan-400 text-slate-950"
-                          : "bg-white/5 text-slate-300 hover:bg-white/10"
-                      }`}
-                    >
-                      1. Client Enquiries ({enquiries.length})
-                    </button>
-                    <button
-                      onClick={() => setActiveAdminTab("reviews")}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        activeAdminTab === "reviews"
-                          ? "bg-cyan-400 text-slate-950"
-                          : "bg-white/5 text-slate-300 hover:bg-white/10"
-                      }`}
-                    >
-                      2. Select Top 3 Reviews ({featuredReviews.length}/3 Featured)
-                    </button>
-                    <button
-                      onClick={() => setActiveAdminTab("gallery")}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        activeAdminTab === "gallery"
-                          ? "bg-cyan-400 text-slate-950"
-                          : "bg-white/5 text-slate-300 hover:bg-white/10"
-                      }`}
-                    >
-                      3. Upload / Edit Pictures ({gallery.length})
-                    </button>
-                    <button
-                      onClick={() => setActiveAdminTab("owner")}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        activeAdminTab === "owner"
-                          ? "bg-cyan-400 text-slate-950"
-                          : "bg-white/5 text-slate-300 hover:bg-white/10"
-                      }`}
-                    >
-                      4. Owner & Company Email
-                    </button>
-                    <button
-                      onClick={() => setActiveAdminTab("security")}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        activeAdminTab === "security"
-                          ? "bg-cyan-400 text-slate-950"
-                          : "bg-white/5 text-slate-300 hover:bg-white/10"
-                      }`}
-                    >
-                      5. Password & Security
-                    </button>
+                    {[
+                      ["enquiries", `1. Client Enquiries (${enquiries.length})`],
+                      ["services", `2. Services & Showcase`],
+                      ["projects", `3. Projects`],
+                      ["reviews", `4. Reviews (${featuredReviews.length} on site)`],
+                      ["owner", "5. Owner & Social Links"],
+                      ["remote", "6. Remote Work"],
+                                      ["security", "7. Password & Security"],
+                    ].map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setActiveAdminTab(key)}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          activeAdminTab === key
+                            ? "bg-cyan-400 text-slate-950"
+                            : "bg-white/5 text-slate-300 hover:bg-white/10"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
                   </div>
 
                   {/* TAB 1: CLIENT ENQUIRIES */}
@@ -2088,15 +1942,15 @@ export default function NexworkTechWebsite() {
                     </div>
                   )}
 
-                  {/* TAB 2: MANAGE & SELECT TOP 3 REVIEWS FOR WEBSITE */}
+                  {/* TAB 4: SELECT REVIEWS FOR WEBSITE */}
                   {activeAdminTab === "reviews" && (
                     <div className="space-y-4">
                       <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-400/25 flex flex-wrap items-center justify-between gap-2">
                         <p className="text-xs text-cyan-200">
-                          Yahan se aap koi bhi <strong>3 Reviews</strong> select kar sakte hain jo website par footer ke upar bade cards mein sabko dikhenge.
+                          Jo reviews aap yahan <strong>select</strong> karenge sirf wahi website par dikhenge. Select nahi kiya toh sirf aapko dikhega.
                         </p>
                         <span className="px-3 py-1 rounded-full bg-cyan-400 text-slate-950 font-black text-xs">
-                          Selected: {featuredReviews.length} / 3
+                          On website: {featuredReviews.length}
                         </span>
                       </div>
 
@@ -2169,138 +2023,18 @@ export default function NexworkTechWebsite() {
                     </div>
                   )}
 
-                  {/* TAB 3: UPLOAD / EDIT WEBSITE PICTURES */}
-                  {activeAdminTab === "gallery" && (
-                    <div className="space-y-8">
-                      <form
-                        onSubmit={handleSaveGalleryItem}
-                        className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-4"
-                      >
-                        <h4 className="text-sm font-bold text-cyan-400">
-                          {editingId ? "Edit Selected Picture" : "Upload New Picture to Website"}
-                        </h4>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <input
-                            type="text"
-                            required
-                            placeholder="Project / Picture Title"
-                            value={newPic.title}
-                            onChange={(e) => setNewPic({ ...newPic, title: e.target.value })}
-                            className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white"
-                          />
-                          <select
-                            value={newPic.category}
-                            onChange={(e) =>
-                              setNewPic({ ...newPic, category: e.target.value })
-                            }
-                            className="px-4 py-2.5 rounded-xl bg-[#11182f] border border-white/10 text-xs text-white"
-                          >
-                            <option value="AI Automation">AI Automation</option>
-                            <option value="IoT Development">IoT Development</option>
-                            <option value="PCB Designing">PCB Designing</option>
-                          </select>
-                        </div>
-
-                        <input
-                          type="text"
-                          placeholder="Short description..."
-                          value={newPic.description}
-                          onChange={(e) =>
-                            setNewPic({ ...newPic, description: e.target.value })
-                          }
-                          className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white"
-                        />
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                          <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">
-                              Option 1: Choose Photo from PC / Mobile
-                            </label>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleFileUpload(e, "gallery")}
-                              className="text-xs text-slate-300 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-cyan-500/20 file:text-cyan-300"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] text-slate-400 mb-1">
-                              Option 2: Or Paste Image URL
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="https://..."
-                              value={newPic.image}
-                              onChange={(e) => setNewPic({ ...newPic, image: e.target.value })}
-                              className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex gap-3">
-                          <button
-                            type="submit"
-                            className="px-6 py-2.5 rounded-xl bg-cyan-400 text-slate-950 font-bold text-xs"
-                          >
-                            {editingId ? "Update Picture" : "+ Upload to Website"}
-                          </button>
-                          {editingId && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setEditingId(null);
-                                setNewPic({
-                                  title: "",
-                                  category: "AI Automation",
-                                  description: "",
-                                  image: "",
-                                });
-                              }}
-                              className="px-4 py-2.5 rounded-xl bg-white/10 text-xs"
-                            >
-                              Cancel Edit
-                            </button>
-                          )}
-                        </div>
-                      </form>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        {gallery.map((item) => (
-                          <div
-                            key={item.id}
-                            className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col justify-between"
-                          >
-                            <div>
-                              <img
-                                src={item.image}
-                                alt={item.title}
-                                className="w-full h-32 object-cover rounded-xl mb-3"
-                              />
-                              <h5 className="font-bold text-xs text-white">{item.title}</h5>
-                              <p className="text-[11px] text-cyan-400">{item.category}</p>
-                            </div>
-                            <div className="flex gap-2 mt-3 pt-3 border-t border-white/10">
-                              <button
-                                onClick={() => handleEditClick(item)}
-                                className="flex-1 py-1.5 rounded-lg bg-white/10 hover:bg-cyan-400 hover:text-slate-950 text-[11px] font-semibold flex items-center justify-center gap-1"
-                              >
-                                <Edit2 className="w-3 h-3" /> Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteGalleryItem(item.id)}
-                                className="py-1.5 px-3 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[11px]"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                  {/* TAB 2: SERVICES + SHOWCASE */}
+                  {activeAdminTab === "services" && (
+                    <ServicesAdmin services={services} setServices={setServices} gallery={gallery} setGallery={setGallery} />
                   )}
 
-                  {/* TAB 4: EDIT OWNER & COMPANY DETAILS */}
+                  {/* TAB 3: PROJECTS */}
+                  {activeAdminTab === "projects" && <ProjectsAdmin projects={projects} setProjects={setProjects} />}
+
+                  {/* TAB 6: REMOTE WORK */}
+                  {activeAdminTab === "remote" && <RemoteAdmin />}
+
+                  {/* TAB 5: EDIT OWNER, SOCIAL LINKS & COMPANY DETAILS */}
                   {activeAdminTab === "owner" && (
                     <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-4">
                       <h4 className="text-sm font-bold text-cyan-400">
@@ -2369,6 +2103,30 @@ export default function NexworkTechWebsite() {
                         />
                       </div>
 
+                      <div className="pt-2 border-t border-white/10">
+                        <h5 className="text-xs font-bold text-slate-300 mb-3">Social Links (khali chhodenge toh icon nahi dikhega)</h5>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {[
+                            ["linkedin", "LinkedIn profile link", "https://linkedin.com/in/..."],
+                            ["instagram", "Instagram link", "https://instagram.com/..."],
+                            ["facebook", "Facebook link", "https://facebook.com/..."],
+                            ["whatsapp", "WhatsApp number ya link", "91XXXXXXXXXX"],
+                            ["youtube", "YouTube link (optional)", "https://youtube.com/@..."],
+                          ].map(([k, label, ph]) => (
+                            <div key={k}>
+                              <label className="block text-[11px] text-slate-400 mb-1">{label}</label>
+                              <input
+                                type="text"
+                                placeholder={ph}
+                                value={owner[k] || ""}
+                                onChange={(e) => saveOwner({ ...owner, [k]: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
                         <div>
                           <label className="block text-[11px] text-slate-400 mb-1">
@@ -2415,7 +2173,7 @@ export default function NexworkTechWebsite() {
                     </div>
                   )}
 
-                  {/* TAB 5: PASSWORD & SECURITY */}
+                  {/* TAB 8: PASSWORD & SECURITY */}
                   {activeAdminTab === "security" && (
                     <form
                       onSubmit={handleChangePassword}
@@ -2456,6 +2214,8 @@ export default function NexworkTechWebsite() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <RemoteWorkModal open={isRemoteOpen} onClose={() => setIsRemoteOpen(false)} />
     </div>
   );
 }

@@ -26,7 +26,7 @@ export async function POST(req) {
   try {
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({ folder: form.get("folder") === "owner" ? "nexworktech/owner" : "nexworktech/gallery" }, (err, res) =>
+        .upload_stream({ folder: `nexworktech/${["owner", "gallery", "projects", "services"].includes(form.get("folder")) ? form.get("folder") : "gallery"}` }, (err, res) =>
           err ? reject(err) : resolve(res)
         )
         .end(buffer);

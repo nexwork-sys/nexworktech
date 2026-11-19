@@ -1,4 +1,5 @@
 import { GalleryItem } from "@/lib/models";
+import { SERVICE_KINDS } from "@/lib/defaults";
 import { guard, json, fail, readBody } from "@/lib/api";
 
 export async function POST(req) {
@@ -8,7 +9,7 @@ export async function POST(req) {
   if (!b.title || !b.image) return fail("Title aur image zaroori hai");
   const item = await GalleryItem.create({
     title: b.title,
-    category: b.category,
+    category: SERVICE_KINDS.includes(b.category) ? b.category : "AI Automation",
     description: b.description || "",
     image: b.image,
   });

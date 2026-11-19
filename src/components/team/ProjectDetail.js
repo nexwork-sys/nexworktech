@@ -32,6 +32,11 @@ export default function ProjectDetail({ id, user, onBack }) {
   const setStatus = async (taskId, status) => {
     try { await api(`/api/team/tasks/${taskId}`, "PATCH", { status }); load(); } catch (e) { alert(e.message); }
   };
+  const requestChanges = async (t) => {
+    const feedback = prompt("Employee ko kya badalna hai? (feedback)");
+    if (feedback === null) return;
+    try { await api(`/api/team/tasks/${t.id}`, "PATCH", { status: "in_progress", feedback }); load(); } catch (e) { alert(e.message); }
+  };
   const delTask = async (taskId) => {
     if (!confirm("Ye task delete karein?")) return;
     await api(`/api/team/tasks/${taskId}`, "DELETE").catch((e) => alert(e.message));
@@ -160,6 +165,20 @@ export default function ProjectDetail({ id, user, onBack }) {
                         <span className="flex items-center gap-1">{t.assignee ? <><Avatar name={t.assignee.name} size={5} />{t.assignee.name}</> : "Unassigned"}</span>
                         <span><span className={PRIORITY[t.priority]}>{t.priority}</span>{t.dueDate && ` · ${fmtDate(t.dueDate)}`}</span>
                       </div>
+                      {t.submission?.submittedAt && (
+                        <div className="text-[11px] p-2 rounded-lg bg-emerald-500/10 border border-emerald-400/20 text-emerald-200 space-y-1">
+                          <p className="font-bold">Submitted {timeAgo(t.submission.submittedAt)}</p>
+                          {t.submission.note && <p className="whitespace-pre-line">{t.submission.note}</p>}
+                          {t.submission.link && <a href={t.submission.link} target="_blank" rel="noreferrer" className="text-cyan-300 hover:underline break-all inline-flex items-center gap-1">{t.submission.link} <ExternalLink className="w-3 h-3 shrink-0" /></a>}
+                        </div>
+                      )}
+                      {t.feedback && <p className="text-[11px] p-2 rounded-lg bg-amber-500/10 border border-amber-400/25 text-amber-200"><b>Feedback:</b> {t.feedback}</p>}
+                      {isAdmin && t.status === "review" && (
+                        <div className="flex gap-2">
+                          <button onClick={() => setStatus(t.id, "done")} className={`${btnPrimary} flex-1`}>Approve</button>
+                          <button onClick={() => requestChanges(t)} className={`${btnGhost} flex-1`}>Changes chahiye</button>
+                        </div>
+                      )}
                       {canEdit && (
                         <select className={`${sel} w-full`} value={t.status} onChange={(e) => setStatus(t.id, e.target.value)}>
                           {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}

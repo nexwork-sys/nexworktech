@@ -1,7 +1,7 @@
 import { Setting } from "@/lib/models";
 import { guard, json, readBody } from "@/lib/api";
 
-const FIELDS = ["name", "role", "photo", "bio", "experience", "location", "email", "phone"];
+const FIELDS = ["name", "role", "photo", "bio", "experience", "location", "email", "phone", "linkedin", "instagram", "facebook", "whatsapp", "youtube"];
 
 export async function PUT(req) {
   const { error } = await guard("admin");

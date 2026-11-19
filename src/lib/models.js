@@ -25,7 +25,7 @@ export const GalleryItem = model(
   new Schema(
     {
       title: { type: String, required: true, trim: true },
-      category: { type: String, default: "AI Automation" },
+      category: { type: String, default: "AI Automation" }, // "AI Automation" ya "AIoT"
       description: { type: String, default: "" },
       image: { type: String, required: true },
     },
@@ -57,6 +57,7 @@ export const Enquiry = model(
       contact: { type: String, required: true, trim: true },
       service: { type: String, default: "" },
       message: { type: String, required: true },
+      status: { type: String, enum: ["new", "contacted", "qualified", "won", "lost"], default: "new" },
       date: { type: String, default: "" },
     },
     opts
@@ -115,6 +116,13 @@ export const Task = model(
       status: { type: String, enum: ["todo", "in_progress", "review", "done"], default: "todo" },
       priority: { type: String, enum: ["low", "medium", "high"], default: "medium" },
       dueDate: { type: Date, default: null },
+      // Employee jab kaam submit karta hai (note + link), admin approve ya changes maangta hai
+      submission: {
+        note: { type: String, default: "" },
+        link: { type: String, default: "" },
+        submittedAt: { type: Date, default: null },
+      },
+      feedback: { type: String, default: "" },
     },
     opts
   )
@@ -151,3 +159,103 @@ const commitSchema = new Schema(
 );
 commitSchema.index({ project: 1, sha: 1 }, { unique: true });
 export const Commit = model("Commit", commitSchema);
+
+/* ---------- SITE CONTENT (admin se edit hota hai) ---------- */
+// Services: AI Automation / AIoT — admin card ka text, features, rang sab badal sakta hai
+export const Service = model(
+  "Service",
+  new Schema(
+    {
+      kind: { type: String, enum: ["ai", "aiot"], default: "ai" }, // icon + showcase filter
+      tag: { type: String, default: "" },
+      title: { type: String, required: true, trim: true },
+      description: { type: String, default: "" },
+      features: [{ type: String }],
+      order: { type: Number, default: 0 },
+    },
+    opts
+  )
+);
+
+// Website ke "Our Projects" — admin image + link + description lagata hai
+export const PortfolioProject = model(
+  "PortfolioProject",
+  new Schema(
+    {
+      name: { type: String, required: true, trim: true },
+      tag: { type: String, default: "" },
+      url: { type: String, default: "" },
+      description: { type: String, default: "" },
+      images: [{ type: String }],
+      stats: [{ type: String }],
+      order: { type: Number, default: 0 },
+    },
+    opts
+  )
+);
+
+/* ---------- REMOTE WORK ---------- */
+// Admin ke diye hue kaam (rate + description) jise log apply karte hain
+export const RemoteJob = model(
+  "RemoteJob",
+  new Schema(
+    {
+      title: { type: String, required: true, trim: true },
+      description: { type: String, default: "" },
+      rate: { type: String, default: "" }, // "₹15,000" / "₹500/hr"
+      rateType: { type: String, enum: ["fixed", "hourly", "monthly"], default: "fixed" },
+      skills: [{ type: String }],
+      status: { type: String, enum: ["open", "closed"], default: "open" },
+    },
+    opts
+  )
+);
+
+// Visitor admin ko kaam dena chahta hai
+export const WorkRequest = model(
+  "WorkRequest",
+  new Schema(
+    {
+      name: { type: String, required: true, trim: true },
+      contact: { type: String, required: true, trim: true },
+      title: { type: String, required: true, trim: true },
+      description: { type: String, required: true },
+      budget: { type: String, default: "" },
+      date: { type: String, default: "" },
+    },
+    opts
+  )
+);
+
+// Visitor admin ke kaam ke liye apna detail bhejta hai
+export const JobApplication = model(
+  "JobApplication",
+  new Schema(
+    {
+      job: { type: Schema.Types.ObjectId, ref: "RemoteJob", default: null },
+      jobTitle: { type: String, default: "" },
+      name: { type: String, required: true, trim: true },
+      contact: { type: String, required: true, trim: true },
+      skills: { type: String, default: "" },
+      link: { type: String, default: "" },
+      message: { type: String, default: "" },
+      date: { type: String, default: "" },
+    },
+    opts
+  )
+);
+
+/* ---------- TEAM CHAT ---------- */
+// thread = employee ki user id (har employee ka admin ke saath ek thread)
+export const Message = model(
+  "Message",
+  new Schema(
+    {
+      thread: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+      sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      text: { type: String, required: true },
+      readBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    },
+    opts
+  )
+);

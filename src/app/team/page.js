@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { LogOut, Lock, ArrowLeft, LayoutDashboard, FolderKanban, Users, ListChecks, KeyRound } from "lucide-react";
+import { LogOut, Lock, ArrowLeft, LayoutDashboard, FolderKanban, Users, ListChecks, KeyRound, MessageCircle } from "lucide-react";
 import { api, card, inp, btnPrimary, btnGhost, Err } from "@/components/team/ui";
 import Overview from "@/components/team/Overview";
 import Projects from "@/components/team/Projects";
@@ -10,6 +10,7 @@ import ProjectDetail from "@/components/team/ProjectDetail";
 import Employees from "@/components/team/Employees";
 import MyWork from "@/components/team/MyWork";
 import Account from "@/components/team/Account";
+import Chat from "@/components/team/Chat";
 
 export default function TeamPage() {
   const [user, setUser] = useState(undefined); // undefined = loading, null = logged out
@@ -25,8 +26,8 @@ export default function TeamPage() {
 
   const isAdmin = user.role === "admin";
   const tabs = isAdmin
-    ? [["overview", "Overview", LayoutDashboard], ["projects", "Projects", FolderKanban], ["employees", "Employees", Users], ["my", "My Tasks", ListChecks], ["account", "Account", KeyRound]]
-    : [["my", "My Work", ListChecks], ["projects", "My Projects", FolderKanban], ["account", "Account", KeyRound]];
+    ? [["overview", "Overview", LayoutDashboard], ["projects", "Projects", FolderKanban], ["employees", "Employees", Users], ["chat", "Chat", MessageCircle], ["my", "My Tasks", ListChecks], ["account", "Account", KeyRound]]
+    : [["my", "My Work", ListChecks], ["chat", "Chat with Admin", MessageCircle], ["projects", "My Projects", FolderKanban], ["account", "Account", KeyRound]];
   const current = tab || tabs[0][0];
 
   const openProject = (id) => { setProjectId(id); setTab("projects"); };
@@ -72,6 +73,7 @@ export default function TeamPage() {
           : <Projects user={user} openProject={setProjectId} />)}
         {current === "employees" && <Employees me={user} />}
         {current === "my" && <MyWork openProject={openProject} />}
+        {current === "chat" && <Chat user={user} />}
         {current === "account" && <Account user={user} onUser={setUser} />}
       </main>
     </Shell>
